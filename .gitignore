@@ -1,0 +1,11 @@
+# wlbot
+logs
+config-auth.cfg
+.replit
+but.lockb
+replit*
+.cache
+.config
+.github
+.upm
+node_modules

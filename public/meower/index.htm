@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>MY AMAZING WEBSITE 🍕︎🍔︎😁︎</title>
+  <link href="../global.css" rel="stylesheet">
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/98.css"
+  >
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      $("#submit").click(function(){
+        console.log("HI!");
+        var url = `https://wlbot.fakefurry.repl.co/api/send/home?post=${$("#post").val()}&user=${$("#user").val()}`;
+        fetch(url).then(response => {
+            response.text().then(text => {
+            console.log(text);
+          });
+        })
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <section class="background">
+    <main class="main center">
+      <h1 id="no-margin">My amazing website - Meower</h1>
+      <div id="content">
+        <div id="content-grid-container">
+          <div id="main" class="body">
+            <h4 id="padding1" class="header">Send messages</h4>
+            <div style="padding-inline-start: 10px;" id="form">
+              <label for="post">Post:</label><br>
+              <input type="text" id="post" name="post" placeholder="Type something here"><br>
+              <label for="user">Username:</label><br>
+              <input type="text" id="user" name="user" placeholder="John Doe"><br><br>
+              <button id="submit">Submit</button>
+            </div>
+            <h6 id="paddinginlline1">What i do </h6>
+            <ul>
+              <li>Programing websites, games & servers</li>
+            </ul>
+          </div>
+          <div id="recent" class="body">
+            <h4 id="padding1" class="header">Recent stuff</h4>
+            <h6 id="paddinginlline1">Projects</h6>
+            <ul>
+              <li>🍕︎🍕︎🍕︎</li>
+              <li>Minecraft⛏︎</li>
+              <li>Weekends</li>
+            </ul>
+            <h6 id="paddinginlline1">What i do </h6>
+            <ul>
+              <li>Programing websites, games & servers</li>
+            </ul>
+          </div>
+          <div id="side">
+            <div id="links" class="body">
+              <h4 id="padding1" class="header">Links</h4>
+              <ul>
+                <li><a href="1">Lorem, ipsum dolor.</a></li>
+                <li><a href="2">Animi, est doloremque.</a></li>
+                <li><a href="3">Veniam, similique itaque?</a></li>
+                <li><a href="4">Iusto, voluptas dicta!</a></li>
+                <li><a href="5">Quo, ipsam aspernatur?</a></li>
+              </ul>
+            </div>
+            <div id="links" class="body">
+              <h4 id="padding1" class="header">Links</h4>
+              <ul>
+                <li><a href="1">Lorem, ipsum dolor.</a></li>
+                <li><a href="2">Animi, est doloremque.</a></li>
+                <li><a href="3">Veniam, similique itaque?</a></li>
+                <li><a href="4">Iusto, voluptas dicta!</a></li>
+                <li><a href="5">Quo, ipsam aspernatur?</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+</body>
+
+</html>

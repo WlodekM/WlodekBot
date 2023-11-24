@@ -1,0 +1,133 @@
+:root {
+    --background: linear-gradient(#cc0, #440);
+    --foreground: #ff9;
+    --font: "Pixelated MS Sans Serif";
+    image-rendering: pixelated;
+}
+
+body {
+    margin: 0;
+}
+
+section.background {
+    /* position: absolute; */
+    width: 100%;
+    min-height: 100%;
+    background: var(--background);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+main.main {
+    image-rendering: pixelated;
+    font-family: var(--font);
+    background: var(--foreground);
+    position: absolute;
+    width: calc(100% - 20vw);
+    padding: 10px;
+    min-height: calc(100% - 20px);
+}
+
+main.main.center {
+    margin-inline: 10vw;
+    box-shadow: 0 0 25px #000000;
+}
+
+main #no-margin {
+    margin: 0;
+}
+
+main #padding1 {
+    margin:  0;
+    padding: 10px;
+}
+
+main #paddinginlline1 {
+    margin:  0;
+    padding-inline: 10px;
+}
+
+main #paddingblock1 {
+    margin:  0;
+    padding-block: 10px;
+}
+
+main #paddingleft1 {
+    margin-block-start: 0;
+    margin-left: 10px;
+}
+
+#content div#content-grid-container {
+    display: grid;
+    /* padding-right: 15%; */
+    grid-template-areas:'main main right'
+                        'stuff stuff right';
+    gap: 10px;
+}
+
+.body#main {
+    grid-area: main;
+}
+.body#recent {
+    grid-area: stuff;
+}
+
+#side {
+    min-height: 50%;
+}
+
+#links {
+    height: 100%;
+}
+
+#content .body {
+    display:block;
+    background: 
+        linear-gradient(90deg,#f708 0%, #0000 20px, #0000 100%),
+        #ff0;
+}
+
+#content-grid-container .header {
+    background: linear-gradient(#f708, #0000);
+}
+
+#content-grid-container h6,#links ul li {
+    border-top: #0002 1px solid;
+    padding-top: 10px;
+}
+
+#links ul li {
+    padding-block: 0;
+    list-style-type: none;
+    padding-inline-start: 40px;
+}
+
+#links ul {
+    padding-inline: 0;
+    margin-top: 0;
+}
+
+#links ul a {
+    display: block;
+    width: 100%;
+    padding-block: 5px;
+}
+
+#links ul li:hover {
+    background: #fff4;
+}
+
+#links ul:last-child {
+    border-bottom: #0002 1px solid;
+}
+
+/* 98.css messes up header font sizes */
+:-webkit-any(article, aside, nav, section) h1 {
+    font-size: 1.5em !important;
+}
+h4 {
+    font-size: 12px !important;
+}
+h2 {
+  font-size: 1.5em !important;
+}
