@@ -1,6 +1,6 @@
 import http from "https"
 
-export function joke(user, message, origin, command, args) {
+export function joke({user, message, origin, command, args}) {
   var result = '';
   const req = http.request(`https://official-joke-api.appspot.com/random_joke`, (res) => {
     // console.log(res.statusCode);

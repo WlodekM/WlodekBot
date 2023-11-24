@@ -13,9 +13,13 @@ import express from 'express'
 
 // commands
 import { joke } from "./commands/joke.js"
+import { help as helpCommand } from "./commands/help.js"
+import { httpCommand } from "./commands/http.js"
+import { balCommand }  from "./commands/balCommand.js"
+import { buyCommand }  from "./commands/buyCommand.js"
 
 dotenv.config();
-var config, configAuth
+export let config, configAuth
 try {
   config = JSON.parse(fs.readFileSync('config.cfg', 'utf8'))
 } catch(e) {
@@ -40,7 +44,7 @@ const API = config.urls.api;
 const prefix = "@" + username
 const uptime = new Date().getTime();
 
-const help = {
+export const help = {
   "help":        "Get info about my commands",
   "botinfo":     "Get some info about me and my creator",
   "suggest":     "Suggest a command",
@@ -55,7 +59,7 @@ const help = {
   "buy":         "Buy useless items",
   "rost":        "Roast someone with my roasting skillz",
 }
-const commandtags = {
+export const commandTags = {
   "help":                  ["BOT"],
   "botinfo":               ["BOT"],
   "suggest":               ["BOT"],
@@ -80,7 +84,7 @@ const adminlevels = [
   "System admin"
 ]
 admincommands.forEach(element => {
-  commandtags[element] = ["ADMIN"]
+  commandTags[element] = ["ADMIN"]
 });
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -125,14 +129,11 @@ function toTitleCase(text) {
 
 const welcome_messages = new JSONdb("./messages.json");
 
+export const db = new JSONdb("./db.json");
+export const shop = new JSONdb("./shop.json");
+export const bot = new Bot()
 const admins = config.bot.admins;
-const db = new JSONdb("./db.json");
-const place = new JSONdb("./place.json");
-const karma = new JSONdb("./karma.json");
-const ips = new JSONdb("./ips.json");
-const shop = new JSONdb("./shop.json");
 const server = config.urls.server
-const bot = new Bot()
 bot.version = update.version
 const app = express()
 const port = 3000;
@@ -365,91 +366,24 @@ try {
               break;
           }
         } else {
+          var commandParams = {user, message, origin, command, args}
           switch (command) {
             case ("help"):
-              if (args[0] in help) {
-                bot.post(help[args[0]], origin)
-              } else {
-                var msg = ""
-                var hlep = []
-                msg += `Hello, i'm ${username} - a multipurpose bot!\nHere are my commands:`
-                for (const key in commandtags) {
-                  if (Object.hasOwnProperty.call(commandtags, key)) {
-                    const element = commandtags[key];
-                    if(hlep[element[0]] == null) {
-                      hlep[element[0]] = []
-                    }
-                    hlep[element[0]].push(key)
-                  }
-                }
-                for (const key in hlep) {
-                  if (Object.hasOwnProperty.call(hlep, key)) {
-                    const element = hlep[key];
-                    msg += "\n\n" + `=== ${key} ===` + "\n"
-                    element.forEach(elementi => {
-                      msg += elementi + " "
-                    });
-                  }
-                }
-                bot.post(msg, origin)
-              }
+              helpCommand(commandParams)
               break;
             case ("ping"):
               bot.post(`Hello, i'm ${username} - a multipurpose bot!\nMy prefix is "@${username}" use "@${username} help" to find out about my commands`, origin)
               break;
             case ("http"):
-              var httpmeow = {100: "Continue",101: "Switching Protocols",102: "Processing",103: "Early Hints",200: "OK",201: "Created",202: "Accepted",203: "Non-Authoritative Information",204: "No Content",205: "Reset Content",206: "Partial Content",207: "Multi-Status",208: "Already Reported",218: "This is fine",226: "IM Used",300: "Multiple Choices",301: "Moved Permanently",302: "Found",303: "See Other",304: "Not Modified",305: "Use Proxy",307: "Temporary Redirect",308: "Permanent Redirect",400: "Bad Request",401: "Unauthorized",402: "Payment Required",403: "Forbidden",404: "Not Found",405: "Method Not Allowed",406: "Not Acceptable",407: "Proxy Authentication Required",408: "Request Timeout",409: "Conflict",410: "Gone",411: "Length Required",412: "Precondition Failed",413: "Payload Too Large",414: "URI Too Long",415: "Unsupported Media Type",416: "Range Not Satisfiable",417: "Expectation Failed",418: "I'm a Teapot",420: "Enhance Your Calm",421: "Misdirected Request",422: "Unprocessable Entity",423: "Locked",424: "Failed Dependency",425: "Too Early",426: "Upgrade Required",428: "Precondition Required",429: "Too Many Requests",431: "Request Header Fields Too Large",451: "Unavailable For Legal Reasons",500: "Internal Server Error",501: "Not Implemented",502: "Bad Gateway",503: "Service Unavailable",504: "Gateway Timeout",505: "HTTP Version Not Supported",506: "Variant Also Negotiates",507: "Insufficient Storage",508: "Loop Detected",509: "Bandwidth Limit Exceeded",510: "Not Extended",511: "Network Authentication Required",
-              };
-              if(Object.keys(httpmeow).includes(String(args[0]))){
-                bot.post(`[${args[0]}.jpg: https://http.meower.org/${args[0]} ]`)
-              } else {
-                var httpkeys = Object.keys(httpmeow)
-                var random_http = httpkeys[Math.floor(Math.random() * httpkeys.length)]
-                bot.post(`[${random_http}.jpg: https://http.meower.org/${random_http} ]`)
-              }
-              break;
+              httpCommand(commandParams)
             case ("balance"):
-              db.sync()
-              if (!db.has(`${user}-money`)) {
-                db.set(`${user}-money`, 0)
-              }
-              if (args[0] == null) {
-                var user_money = db.get(`${user}-money`)
-                bot.post(`Your balance is ${user_money}${db.get("currency")}`, origin)
-              } else if (args[0] == "reset") {
-                db.set(`${user}-money`, 0)
-                bot.post(`uh ${args[0]}`, origin)
-              }
+              balCommand(commandParams)
               break;
             case ("buy"):
-              db.sync()
-              shop.sync()
-              args = toTitleCase(args.join(" "))
-              if (!db.has(`${user}-money`)) {
-                db.set(`${user}-money`, 0)
-              }
-              if (!db.has(`${user}-inventory`)) {
-                db.set(`${user}-inventory`, [])
-              }
-              if(shop.has(args)) {
-                // bot.post(`Item "${args[0]}" was found, but i didn't add buying yet ¯\\_(ツ)_/¯`,origin)
-                var userinventory = db.get(`${user}-inventory`)
-                var userbalance = db.get(`${user}-money`)
-                var itemprice = shop.get(args)
-                if(userbalance >= itemprice) {
-                  userinventory.push(args)
-                  db.set(`${user}-inventory`, userinventory)
-                  db.set(`${user}-money`, userbalance - itemprice)
-                  bot.post(`Item "${args}" bought!`, origin)
-                } else {
-                  bot.post(`You don't have enough money\n(${userbalance} < ${itemprice})`, origin)
-                }
-              } else {
-                bot.post(`Item "${(args)}" was not found`,origin)
-              }
+              buyCommand(commandParams)
               break;
             case ("joke"):
-              joke(user, message, origin, command, args)
+              joke(commandParams)
               break;
             case ("roast"):
               if(args[0].startsWith("@")) {
@@ -727,7 +661,7 @@ try {
     console.log('bot is ded');
     log(`: Bot died`)
     delay(1500);
-    process.exit(1)
+    bot.login(username, password)
   });
   bot.onLogin(() => {
     log(`: Logged on as user ${username}`)
@@ -742,4 +676,4 @@ try {
   log(`! Error! ${erroring}`)
   throw new Error(erroring);
 }
-bot.login(username, password)
+bot.login(username, password, server)
