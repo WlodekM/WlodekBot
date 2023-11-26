@@ -12,11 +12,18 @@ import http from "https"
 import express from 'express'
 
 // commands
-import { joke } from "./commands/joke.js"
-import { help as helpCommand } from "./commands/help.js"
-import { httpCommand } from "./commands/http.js"
-import { balCommand }  from "./commands/balCommand.js"
-import { buyCommand }  from "./commands/buyCommand.js"
+import { joke }                   from "./commands/joke.js"
+import { balCommand }             from "./commands/balCommand.js"
+import { buyCommand }             from "./commands/buyCommand.js"
+import { httpCommand }            from "./commands/http.js"
+import { shopCommand }            from "./commands/shopCommand.js"
+import { workCommand }            from "./commands/workCommand.js";
+import { roastCommand }           from "./commands/roastCommand.js";
+import { whoisCommand }           from "./commands/whoisCommand.js";
+import { ulistCommand }           from "./commands/ulistCommand.js";
+import { inventoryCommand }       from "./commands/inventoryCommand.js";
+import { leaderboardCommand }     from "./commands/leaderboardCommand.js";
+import { help as helpCommand }    from "./commands/help.js"
 
 dotenv.config();
 export let config, configAuth
@@ -101,7 +108,7 @@ function leaderboard(userscores) {
 function formatshop(userscores) {
   let result = Object.entries(userscores)
     .sort((a, b) => b[1] - a[1])
-    .map((p) => `${p[0]} - ${p[1]}${db.get("currency")}`)
+    .map((p) => `${p[0]} - ${p[1]}${config.settings.economy.currency}`)
     .join("\n");
   return (result)
 }
@@ -386,228 +393,33 @@ try {
               joke(commandParams)
               break;
             case ("roast"):
-              if(args[0].startsWith("@")) {
-                fs.readFile('roasts.txt', 'utf8', (err, data) => {
-                  var roasts = data.split("\n")
-                  bot.post(
-                    (args[0] + " " + roasts[Math.floor(Math.random() * roasts.length)]), origin
-                  );
-                });
-              }
+              roastCommand(commandParams)
               break;
             case ("inv"):
             case ("inventory"):
-              shop.sync()
-              if (!db.has(`${user}-inventory`)) db.set(`${user}-inventory`, [])
-              var userinventory = db.get(`${user}-inventory`)
-              bot.post(`=== ${user}'s inventory ===\n${userinventory.join(",\n")}`)
+              inventoryCommand(commandParams)
               break;
             case ("shop"):
-              db.sync()
-              shop.sync()
-              if (!db.has(`${user}-money`)) {
-                db.set(`${user}-money`, 0)
-              }
-              bot.post(`${formatshop(shop.JSON())}`)
+              shopCommand(commandParams)
               break;
             case ("lb"):
             case ("top"):
             case ("leader"):
             case ("leaderboard"):
-              db.sync()
-              var database_a = db.JSON()
-              var money_leaderboard = {}
-              for (const key in database_a) {
-                if (Object.hasOwnProperty.call(database_a, key)) {
-                  const element = database_a[key];
-                  if (key.includes("-money")) {
-                    let keya = key.replaceAll("-money", "")
-                    money_leaderboard[keya] = element
-                  }
-                }
-              }
-              console.log(`LB!: ${JSON.stringify((leaderboardarrayplace(money_leaderboard)))}`)
-              var user_place = (Object.values(leaderboardarrayplace(money_leaderboard)).indexOf(user)) + 1
-              money_leaderboard = Object.values(leaderboardarray(money_leaderboard))
-              if (args[0] != "full") {
-                money_leaderboard = money_leaderboard.slice(0, 10)
-              }
-              bot.post(`${money_leaderboard.join("\n")}\n\nYou are №${user_place}`, origin)
+              leaderboardCommand(commandParams)
               break;
             case ("work"):
-              db.sync();
-              if (!db.has(`${user}-money`)) db.set(`${user}-money`, 0);
-              if (!db.has(`${user}-work-cooldown`)) db.set(`${user}-work-cooldown`, 0);
-              const cooldown = db.get(`${user}-work-cooldown`);
-              if (cooldown <= getunix()) {
-                  const moneyEarned = getRandomInt(16, 32);
-                  const userMoney = db.get(`${user}-money`);
-                  db.set(`${user}-money`, userMoney + moneyEarned);
-                  db.set(`${user}-work-cooldown`, getunix() + 120);
-                  bot.post(`You have earned ${moneyEarned}${db.get("currency")}`, origin);
-              } else {
-                  const cooldownLeft = cooldown - getunix();
-                  bot.post(`You need to wait ${cooldownLeft} more second${cooldownLeft == 1 ? "" : "s"}`, origin);
-              }
-          
-              db.sync();
+              workCommand(commandParams)
               break;
             case ("info"):
             case ("botinfo"):
               bot.post(`Source code: https://replit.com/@WlodekM/WlodekBot\nMy website: https://wlodekbot.wlodekm.repl.co\nCreator: WlodekM (fir)\nWLodekBot will be soon going offline due to the recent replit chages, if you know an alternitive to replit hosting, please DM @WlodekM3`, origin)
               break;
-            // case ("place"):
-            //   switch (args[0]) {
-            //     case ("place"):
-            //       break;
-            //     case ("view"):
-            //     default:
-            //       let resulta = place.JSON()
-            //       let result = []
-            //       for (const key in resulta) {
-            //         if (Object.hasOwnProperty.call(resulta, key)) {
-            //           const element = resulta[key];
-            //           result.push(`${key} ${element}`)
-            //         }
-            //       }
-            //       result = result.join("\n")
-            //       result = `  1234567\n` + result
-            //       bot.post(result, origin)
-            //   }
-            //   break;
             case ("userlist"):
-              fs.readFile('ulist', 'utf8', (err, data) => {
-                if (err) {
-                  console.error(err);
-                  return;
-                }
-                var userlist = JSON.parse(data)
-                bot.post(`There are currently ${userlist.length} user(s) online (${userlist.join(", ")}).`, origin)
-              });
+              ulistCommand(commandParams)
               break;
-            //Risky, if another bot has a say comand then spam is possible :(
-            // cese("say"):
-            //   bot.post(args.join(" "), origin)
-            //   break;
             case ("whois"):
-              if (args.length >= 1) {
-                args[0] = args[0].replaceAll("@", "")
-                var userinfo
-                var result = '';
-                const req = http.request(`https://${API}/users/${args[0]}`, (res) => {
-                  // console.log(res.statusCode);
-  
-                  res.setEncoding('utf8');
-                  res.on('data', (chunk) => {
-                    result += chunk;
-                  });
-  
-                  res.on('end', () => {
-                    // console.log(result);
-                    result = JSON.parse(result)
-                    if (result["error"]) {
-                      bot.post(`User ${args[0]} not found, check your spelling and try again`, origin)
-                    } else {
-                      if (args[1] == "debug") {
-                        bot.post(JSON.stringify(result), origin)
-                      }
-                      if (args[1] == "pfp") {
-                        bot.post(`[.png: https://assets.meower.org/PFP/${result["pfp_data"] - 1}.png ]`, origin)
-                      } else {
-                        var resa = fetch(`https://${API}/users/${args[0]}/posts?autoget`).then(resa => {
-  
-                          var postspagee = resa.json().then(postspagee => {
-                            if (args[1] == "debug") {
-                              bot.post(postspagee, origin)
-                            }
-                            var postspage
-                            if (postspagee["pages"] > 0) {
-                              postspage = postspagee["pages"]
-                            } else {
-                              postspage = "None"
-                            }
-                            // console.log(`Pages: ${postspage}`)
-                            var topost = []
-                            var resultposts = '';
-                            var theurl
-                            if (postspage != "None") {
-                              var theurl = `https://${API}/users/${args[0]}/posts?autoget&page=${postspage}`
-                            } else {
-                              var theurl = `https://${API}/users/${args[0]}/posts?autoget`
-                            }
-                            const req = http.request(theurl, (res) => {
-                              // console.log(res.statusCode);
-  
-                              res.setEncoding('utf8');
-                              res.on('data', (chunk) => {
-                                resultposts += chunk;
-                              });
-  
-                              res.on('end', () => {
-                                // console.log(resultposts);
-                                if (postspage != "None") {
-                                  resultposts = JSON.parse(resultposts)
-                                  if (resultposts["error"]) {
-                                    resultposts = "Error"
-                                  }
-                                  resultposts = resultposts["autoget"]
-                                  if (args[1] == "debug") {
-                                    bot.post(`${JSON.stringify(resultposts)}:${resultposts}`, origin)
-                                  }
-                                  resultposts = resultposts[resultposts.length - 1]
-                                }
-                                var badges = db.get(`${result["_id"]}-badges`)
-                                topost.push(`=== ${result["_id"]}${badges ? " " : ""}${badges ? badges : ""} ===`)
-                                if (result["banned"]) {
-                                  topost.push(`Banned: yes`)
-                                } else {
-                                  topost.push(`Banned: no`)
-                                }
-                                let lvlusr = result["lvl"]
-                                topost.push(`Level: ${lvlusr}(${adminlevels[lvlusr]})`)
-  
-                                if (result["quote"]) { topost.push(`Quote: ${result["quote"]}`) }
-                                topost.push(`PFP №: ${result["pfp_data"]}`)
-                                // topost.push(`Theme: ${result["theme"]}`)
-                                // multiplied by 1000 so that the argument is in milliseconds, not seconds.
-                                var date = new Date(result["created"] * 1000);
-                                // Hours part from the timestamp
-                                var hours = date.getHours();
-                                // Minutes part from the timestamp
-                                var minutes = "0" + date.getMinutes();
-                                // Seconds part from the timestamp
-                                var seconds = "0" + date.getSeconds();
-  
-                                // Will display time in 10:30:23 format
-                                var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-  
-                                topost.push(`Created: ${date.toDateString()} at ${formattedTime}`)
-                                if (postspage != "None") {
-                                  topost.push(`First post: ${resultposts["p"]}`)
-                                }
-                                // topost.push(`====${"=".repeat(args[0].length)}====`)
-                                bot.post(topost.join("\n"), origin)
-                              });
-                            });
-  
-                            req.on('error', (e) => {
-                              console.error(e);
-                            });
-  
-                            req.end();
-                          });
-                        });
-                      }
-                    }
-                  });
-                });
-  
-                req.on('error', (e) => {
-                  console.error(e);
-                });
-  
-                req.end();
-              }
+              whoisCommand(commandParams)
               break;
             case ("suggest"):
               welcome_messages.sync()
@@ -661,16 +473,36 @@ try {
     console.log('bot is ded');
     log(`: Bot died`)
     delay(1500);
-    bot.login(username, password)
+    bot.login(username, password, server)
   });
   bot.onLogin(() => {
     log(`: Logged on as user ${username}`)
     welcome_messages.sync()
     var messages = welcome_messages.get("verified")
     var random_message = messages[Math.floor(Math.random() * messages.length)].replaceAll("${username}", username)
-    config.settings.welcomeMessages.forEach((a, i) => {
-      bot.post(`${random_message}\nBot version: ${update.version}`, a);
-    })
+    // var random_message = "$(lnCount)$ test"
+    fs.readFile('index.js', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      random_message=random_message.replaceAll("$(lnCount)$", String(data.split('\n').length))
+      config.settings.welcomeMessages.forEach((a, i) => {
+        bot.post(`${random_message}\nBot version: ${update.version}`, a);
+      })
+      bot.send(
+        {
+          "cmd": "direct",
+          "val": {
+            "cmd": "update_config",
+            "val": {
+              "quote": `v${update.version} | ${String(data.split('\n').length)} lines of code | ${random_message}`
+            }
+          },
+          "listener": "listener_1538442"
+        }
+      )
+    });
   });
 } catch (erroring) {
   log(`! Error! ${erroring}`)
