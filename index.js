@@ -10,6 +10,8 @@ import { log } from "./libs/logs.js";
 import fs from 'fs'
 import http from "https"
 import express from 'express'
+import { input as consoleInput } from "./libs/consoleInput.js"
+import { createInterface } from 'readline';
 
 // commands
 import { joke }                   from "./commands/joke.js"
@@ -50,6 +52,7 @@ const password = configAuth.bot.password;
 const API = config.urls.api;
 const prefix = "@" + username
 const uptime = new Date().getTime();
+let rl
 
 export const help = {
   "help":        "Get info about my commands",
@@ -255,7 +258,7 @@ try {
     
     // yay command!
     if (isCommand) {
-      console.log(`${user} is using the command ${command}`)
+      if(!config.settings.consoleInput) console.log(`${user} is using the command ${command}`)
       log(`${user} used the command ${command}`)
       if (db.get(`${user}-ban-end`) >= getunix()) {
         var cooldown_left = db.get(`${user}-ban-end`) - getunix()
@@ -453,7 +456,7 @@ try {
     // if (messageData.cmd == "pmsg") { 
     //    bot.send_packet({cmd:"pmsg", val:"I:100 | Bot", id: messageData.origin})
     // }
-    console.log(`New message: ${messageData}`);
+    log(`[CL] ${messageData}`);
     var JSONdata = JSON.parse(messageData)
     switch (JSONdata["cmd"]) {
       case ("ulist"):
@@ -471,6 +474,7 @@ try {
   
   bot.onClose(() => {
     console.log('bot is ded');
+    rl.close()
     log(`: Bot died`)
     delay(1500);
     bot.login(username, password, server)
@@ -503,6 +507,11 @@ try {
         }
       )
     });
+    
+    rl = (async () => {consoleInput(createInterface({
+      input: process.stdin,
+      output: process.stdout
+    }),bot,username)})()
   });
 } catch (erroring) {
   log(`! Error! ${erroring}`)

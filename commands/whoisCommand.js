@@ -1,5 +1,6 @@
 import {bot, db, config} from "../index.js"
 import http from "https"
+import {adminPermissions} from "../libs/bitField.js"
 
 export function whoisCommand({user, message, origin, command, args}) {
     if (args.length >= 1) {
@@ -56,6 +57,9 @@ export function whoisCommand({user, message, origin, command, args}) {
                     });
 
                     res.on('end', () => {
+                      function getKeyByValue(object, value) {
+                        return Object.keys(object).find(key => object[key] === value);
+                      }
                       // console.log(resultposts);
                       if (postspage != "None") {
                         resultposts = JSON.parse(resultposts)
@@ -75,8 +79,8 @@ export function whoisCommand({user, message, origin, command, args}) {
                       } else {
                         topost.push(`> Banned: no`)
                       }
-                      let lvlusr = result["lvl"]
-                      topost.push(`> Permissions: WIP(Raw: ${result["permissions"]})`)
+                      let permissions = getKeyByValue(adminPermissions, result["permissions"])
+                      topost.push(`> Permissions: ${permissions}(Raw: ${result["permissions"]})`)
 
                       if (result["quote"]) { topost.push(`> Quote: ${result["quote"]}`) }
                       topost.push(`> PFP №: ${result["pfp_data"]}`)

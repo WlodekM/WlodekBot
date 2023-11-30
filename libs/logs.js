@@ -1,4 +1,5 @@
 import fs from 'fs'
+import {config} from "../index.js"
 /* Port of strftime(). Compatibility notes:
  *
  * %c - formatted string is slightly different
@@ -93,6 +94,7 @@ function strftime(sFormat, date) {
 }
 export function log(text, next) {
   let logs
+  if(!config.settings.log) return
   fs.readFile('logs', 'utf8', (err, data) => {
     if (err) {
       console.error(err);
