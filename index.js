@@ -53,6 +53,7 @@ const API = config.urls.api;
 const prefix = "@" + username
 const uptime = new Date().getTime();
 let rl
+let isReloaded = false
 
 export const help = {
   "help":        "Get info about my commands",
@@ -153,35 +154,59 @@ var website = (()=>{
   app.get('/api', (req, res) => {
     res.send('Hello World!, the api is in progress')
   })
-  app.get('/api/send/home', (req, res) => {
-    // if(req.ip!=process.env['blockedip']){
-    //   ips.set(req.query["user"],req.ip)
-    // }
-    if (req.query["user"] != null) {
-      if (req.query["post"] != null) {
-        bot.post(`${req.query["user"]}:${req.query["post"]}`)
-        res.send(`{"error":false"}`)
-      } else {
-        res.send(`{"error":true,"type":"E:101 | Invalid arguments"}`)
-      }
-    } else {
-      res.send(`{"error":true,"type":"E:101 | Invalid arguments"}`)
-    }
-  })
   app.get('/logs', function(req, res) {
+    function deHTML(input) {
+      let dhout = input;
+      dhout = dhout.replaceAll("&", "&amp;");
+      dhout = dhout.replaceAll("<", "&lt;");
+      dhout = dhout.replaceAll(">", "&gt;");
+      dhout = dhout.replaceAll('"', "&quot;");
+      dhout = dhout.replaceAll("'", "&apos;");
+      return dhout;
+    }
     fs.readFile('logs', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
         return;
       }
-      var respond = data.replaceAll("\n", "<br>")
+      let respond = data
+      respond = respond.split("\n").slice(-50).join("\n");
       respond = `\
       <head>\
       <link rel="stylesheet" href="../logs.css"><meta name="color-scheme" content="light dark">\
-      <head><body>\
-      ${respond}<div id="end">`
+      </head><body>\
+      ${deHTML(respond).replaceAll("\n", "<br>")}<div id="end"></div></body>`
       res.send(respond)
     });
+  });
+  app.get('/config', function(req, res) {
+    function deHTML(input) {
+      let dhout = input;
+      dhout = dhout.replaceAll("&", "&amp;");
+      dhout = dhout.replaceAll("<", "&lt;");
+      dhout = dhout.replaceAll(">", "&gt;");
+      dhout = dhout.replaceAll('"', "&quot;");
+      dhout = dhout.replaceAll("'", "&apos;");
+      return dhout;
+    }
+    fs.readFile('config.cfg', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      let respond = data
+      respond = `\
+      <head>\
+      <link rel="stylesheet" href="../logs.css"><meta name="color-scheme" content="light dark">\
+      </head><body>\
+      ${deHTML(respond).replaceAll("\n", "<br>")}<div id="end"></div></body>`
+      res.send(respond)
+    });
+  })
+  app.get('/postHome', (req, res) => {
+    if (req.query["post"] == null) {res.send(`{"error":true,"type":"E:101 | Invalid arguments"}`); return}
+    bot.post(`${req.query["post"]}`)
+    res.send(`{"error":false"}`)
   });
   app.get('/messages', function(req, res) {
     res.send(welcome_messages.get("verified").join("<br>"))
@@ -456,7 +481,7 @@ try {
     // if (messageData.cmd == "pmsg") { 
     //    bot.send_packet({cmd:"pmsg", val:"I:100 | Bot", id: messageData.origin})
     // }
-    log(`[CL] ${messageData}`);
+    if (config.settings.logCL) log(`[CL] ${messageData}`);
     var JSONdata = JSON.parse(messageData)
     switch (JSONdata["cmd"]) {
       case ("ulist"):
@@ -474,8 +499,9 @@ try {
   
   bot.onClose(() => {
     console.log('bot is ded');
-    rl.close()
+    // rl.close()
     log(`: Bot died`)
+    isReloaded = true
     delay(1500);
     bot.login(username, password, server)
   });
@@ -507,7 +533,7 @@ try {
         }
       )
     });
-    
+    if(isReloaded) return
     rl = (async () => {consoleInput(createInterface({
       input: process.stdin,
       output: process.stdout

@@ -34,7 +34,8 @@ export async function input(rl, bot, username) {
             console.log(`Unknown command "${command}"`)
             break;
     }
-
-    input(rl)
-    return(rl)
+    (async()=>{
+        input(rl)
+        return(rl)
+    })()
 }
