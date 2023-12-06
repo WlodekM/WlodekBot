@@ -9,7 +9,7 @@ A fork of wlbot with more features and easier customisability.
 ### Configuring the bot
 In the folder where you downloded this repo should be two config files "`config.cfg`" and "`config-auth.cfg`".
 
-The `config.cfg` file contains basic settings like the ID for the GC where the bot iwll dump suggestions.
+The `config.cfg` file contains basic settings like the ID for the GC where the bot will dump suggestions.
 
 The `config-auth.cfg` file contains private info like the username and password for logging in.
 

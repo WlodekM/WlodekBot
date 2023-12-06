@@ -12,20 +12,22 @@ import http from "https"
 import express from 'express'
 import { input as consoleInput } from "./libs/consoleInput.js"
 import { createInterface } from 'readline';
+import open from "open"
 
 // commands
-import { joke }                   from "./commands/joke.js"
-import { balCommand }             from "./commands/balCommand.js"
-import { buyCommand }             from "./commands/buyCommand.js"
-import { httpCommand }            from "./commands/http.js"
-import { shopCommand }            from "./commands/shopCommand.js"
-import { workCommand }            from "./commands/workCommand.js";
-import { roastCommand }           from "./commands/roastCommand.js";
-import { whoisCommand }           from "./commands/whoisCommand.js";
-import { ulistCommand }           from "./commands/ulistCommand.js";
-import { inventoryCommand }       from "./commands/inventoryCommand.js";
-import { leaderboardCommand }     from "./commands/leaderboardCommand.js";
-import { help as helpCommand }    from "./commands/help.js"
+import { joke }                      from "./commands/joke.js"
+import { balCommand }                from "./commands/balCommand.js"
+import { buyCommand }                from "./commands/buyCommand.js"
+import { httpCommand }               from "./commands/http.js"
+import { shopCommand }               from "./commands/shopCommand.js"
+import { workCommand }               from "./commands/workCommand.js";
+import { roastCommand }              from "./commands/roastCommand.js";
+import { whoisCommand }              from "./commands/whoisCommand.js";
+import { ulistCommand }              from "./commands/ulistCommand.js";
+import { inventoryCommand }          from "./commands/inventoryCommand.js";
+import { leaderboardCommand }        from "./commands/leaderboardCommand.js";
+import { help as helpCommand }       from "./commands/help.js"
+import { message as wordleCommand }  from "./commands/wordle/command.js"
 
 dotenv.config();
 export let config, configAuth
@@ -86,7 +88,7 @@ export const commandTags = {
   "buy":                   ["ECONOMY"],
 }
 var commands = Object.keys(help)
-const admincommands = ['eval', 'shutdown', 'restart', "update", "suggestions","ban","reset","unban"]
+const admincommands = ['eval', 'shutdown', 'restart', "update", "suggestions","ban","reset","unban", "wordle"]
 const adminlevels = [
   "User",
   "Lower moderator",
@@ -154,6 +156,26 @@ var website = (()=>{
   app.get('/api', (req, res) => {
     res.send('Hello World!, the api is in progress')
   })
+  app.get('/config', function(req, res) {
+    fs.readFile('config.cfg', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      let respond = data
+      respond = respond.split("\n").slice(-50).join("\n");
+      respond = `\
+      <head>\
+      <link rel="stylesheet" href="../logs.css"><meta name="color-scheme" content="light dark">\
+      </head>
+      <body>\
+        <textarea rows="${respond.split("\n").length}" cols="200">
+${respond}
+        </textarea>
+      <div id="end"></div></body>`
+      res.send(respond)
+    });
+  });
   app.get('/logs', function(req, res) {
     function deHTML(input) {
       let dhout = input;
@@ -253,6 +275,7 @@ var website = (()=>{
   app.use(express.static('public'));
   app.listen(port, () => {
     console.log(`The website is up and is on port ${port}`)
+    open("http://localhost:3000/", config.settings.browser);
   });
 })
 if (config.settings.website) website()
@@ -289,6 +312,7 @@ try {
         var cooldown_left = db.get(`${user}-ban-end`) - getunix()
         bot.post(`You are banned for ${db.get(`${user}-ban-reason`)} for ${cooldown_left} more second${cooldown_left = 1 ? "s" : ""}`, origin)
       } else {
+        var commandParams = {user, message, origin, command, args}
         // var mentioned_user = args[0].replaceAll("@","")
         if (admins.includes(user) && admincommands.includes(command)) { //Admin commands
           switch (command) {
@@ -315,6 +339,12 @@ try {
                   db.set(`${banneduser}-ban-reason`, reason)
                 }
               }
+              break;
+            case ("wordle"):
+              let wordleArgs = (args.splice(1))
+              let wordleCommandCommand = (args[0])
+              let wordleCommandArgs = {user, message, origin, wordleCommandCommand, wordleArgs}
+              wordleCommand(wordleCommandArgs)
               break;
             case ("unban"):
               db.sync()
@@ -401,13 +431,12 @@ try {
               break;
           }
         } else {
-          var commandParams = {user, message, origin, command, args}
           switch (command) {
             case ("help"):
               helpCommand(commandParams)
               break;
             case ("ping"):
-              bot.post(`Hello, i'm ${username} - a multipurpose bot!\nMy prefix is "@${username}" use "@${username} help" to find out about my commands`, origin)
+              bot.post(`Hello, i'm ${username} - a multipurpose bot!\nMy prefix is \`@${username}\` use \`@${username} help\` to find out about my commands`, origin)
               break;
             case ("http"):
               httpCommand(commandParams)
@@ -441,7 +470,7 @@ try {
               break;
             case ("info"):
             case ("botinfo"):
-              bot.post(`Source code: https://replit.com/@WlodekM/WlodekBot\nMy website: https://wlodekbot.wlodekm.repl.co\nCreator: WlodekM (fir)\nWLodekBot will be soon going offline due to the recent replit chages, if you know an alternitive to replit hosting, please DM @WlodekM3`, origin)
+              bot.post(`Source code: https://github.com/WlodekM/WlodekBot\nCreator: @WlodekM3\nUptime: [WIP]`, origin)
               break;
             case ("userlist"):
               ulistCommand(commandParams)
@@ -481,7 +510,7 @@ try {
     // if (messageData.cmd == "pmsg") { 
     //    bot.send_packet({cmd:"pmsg", val:"I:100 | Bot", id: messageData.origin})
     // }
-    if (config.settings.logCL) log(`[CL] ${messageData}`);
+    if (config.settings.logCL == "true") {log(`[CL] ${messageData} (${config.settings.logCL})`);}
     var JSONdata = JSON.parse(messageData)
     switch (JSONdata["cmd"]) {
       case ("ulist"):
@@ -541,6 +570,6 @@ try {
   });
 } catch (erroring) {
   log(`! Error! ${erroring}`)
-  throw new Error(erroring);
+  bot.login(username, password, server)
 }
 bot.login(username, password, server)

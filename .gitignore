@@ -10,3 +10,5 @@ replit*
 .upm
 node_modules
 ulist
+db.json
+place.json
