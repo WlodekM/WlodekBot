@@ -7,7 +7,7 @@ A fork of wlbot with more features and easier customisability.
 ``npm install``
 
 ### Configuring the bot
-In the folder where you downloded this repo should be two config files "`config.cfg`" and "`config-auth.cfg`".
+In the repo's folder there should be two config files "`config.cfg`" and "`config-auth.cfg`".
 
 The `config.cfg` file contains basic settings like the ID for the GC where the bot will dump suggestions.
 
