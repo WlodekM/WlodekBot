@@ -15,33 +15,33 @@ import { createInterface } from 'readline';
 import open from "open"
 
 // commands
-import { joke }                      from "./commands/joke.js"
-import { balCommand }                from "./commands/balCommand.js"
-import { buyCommand }                from "./commands/buyCommand.js"
-import { httpCommand }               from "./commands/http.js"
-import { shopCommand }               from "./commands/shopCommand.js"
-import { workCommand }               from "./commands/workCommand.js";
-import { roastCommand }              from "./commands/roastCommand.js";
-import { whoisCommand }              from "./commands/whoisCommand.js";
-import { ulistCommand }              from "./commands/ulistCommand.js";
-import { updateCommand }             from "./commands/updateCommand.js";
-import { inventoryCommand }          from "./commands/inventoryCommand.js";
-import { leaderboardCommand }        from "./commands/leaderboardCommand.js";
-import { help as helpCommand }       from "./commands/help.js"
-import { message as wordleCommand }  from "./commands/wordle/command.js"
+import { joke } from "./commands/joke.js"
+import { balCommand } from "./commands/balCommand.js"
+import { buyCommand } from "./commands/buyCommand.js"
+import { httpCommand } from "./commands/http.js"
+import { shopCommand } from "./commands/shopCommand.js"
+import { workCommand } from "./commands/workCommand.js";
+import { roastCommand } from "./commands/roastCommand.js";
+import { whoisCommand } from "./commands/whoisCommand.js";
+import { ulistCommand } from "./commands/ulistCommand.js";
+import { updateCommand } from "./commands/updateCommand.js";
+import { inventoryCommand } from "./commands/inventoryCommand.js";
+import { leaderboardCommand } from "./commands/leaderboardCommand.js";
+import { help as helpCommand } from "./commands/help.js"
+import { message as wordleCommand } from "./commands/wordle/command.js"
 
 dotenv.config();
 export let config, configAuth
 try {
   config = JSON.parse(fs.readFileSync('config.cfg', 'utf8'))
-} catch(e) {
+} catch (e) {
   console.error("No config file found, please crete a config file!");
   console.error(e);
   process.exit()
 }
 try {
   configAuth = JSON.parse(fs.readFileSync('config-auth.cfg', 'utf8'))
-} catch(e) {
+} catch (e) {
   console.error("No config-auth file found, please crete a config-auth file!");
   console.error(e);
   process.exit()
@@ -50,7 +50,7 @@ try {
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const update = config.bot.update
-const username =  configAuth.bot.username;
+const username = configAuth.bot.username;
 const password = configAuth.bot.password;
 const API = config.urls.api;
 const prefix = "@" + username
@@ -59,46 +59,46 @@ let rl
 let isReloaded = false
 
 export const help = {
-  "help":        "Get info about my commands",
-  "botinfo":     "Get some info about me and my creator",
-  "suggest":     "Suggest a command",
-  "changelog":   "See what's new",
-  "userlist":    "Find out who's online",
-  "andminlist":  "List of all admins",
-  "whois":       "Get info about a user",
-  "balance":     "See how empty your wallet is",
-  "work":        `Earn money`,
+  "help": "Get info about my commands",
+  "botinfo": "Get some info about me and my creator",
+  "suggest": "Suggest a command",
+  "changelog": "See what's new",
+  "userlist": "Find out who's online",
+  "andminlist": "List of all admins",
+  "whois": "Get info about a user",
+  "balance": "See how empty your wallet is",
+  "work": `Earn money`,
   "leaderboard": "See who's №1",
-  "shop":        "See what you can buy",
-  "buy":         "Buy useless items",
-  "rost":        "Roast someone with my roasting skillz",
+  "shop": "See what you can buy",
+  "buy": "Buy useless items",
+  "rost": "Roast someone with my roasting skillz",
 }
 export const commandTags = {
-  "help":                  ["BOT"],
-  "botinfo":               ["BOT"],
-  "suggest":               ["BOT"],
-  "changelog":             ["BOT"],
-  "userlist":              ["USER"],
-  "adminlist":             ["USER"],
-  "whois":                 ["USER"],
-  "roast":                 ["USER"],
-  "balance":               ["ECONOMY"],
-  "work":                  ["ECONOMY"],
-  "leaderboard":           ["ECONOMY"],
-  "shop":                  ["ECONOMY"],
-  "buy":                   ["ECONOMY"],
+  "help": ["BOT"],
+  "botinfo": ["BOT"],
+  "suggest": ["BOT"],
+  "changelog": ["BOT"],
+  "userlist": ["USER"],
+  "adminlist": ["USER"],
+  "whois": ["USER"],
+  "roast": ["USER"],
+  "balance": ["ECONOMY"],
+  "work": ["ECONOMY"],
+  "leaderboard": ["ECONOMY"],
+  "shop": ["ECONOMY"],
+  "buy": ["ECONOMY"],
 }
 var commands = Object.keys(help)
 const admincommands = [
-  'eval', 
+  'eval',
   'shutdown',
-  'restart', 
-  "update", 
+  'restart',
+  "update",
   "suggestions",
   "ban",
   "reset",
-  "unban", 
-  "wordle", 
+  "unban",
+  "wordle",
   "shell"
 ]
 const adminlevels = [
@@ -163,12 +163,12 @@ bot.version = update.version
 const app = express()
 const port = 3000;
 //express (website)
-var website = (()=>{
+var website = (() => {
   app.set('trust proxy', true)
   app.get('/api', (req, res) => {
     res.send('Hello World!, the api is in progress')
   })
-  app.get('/config', function(req, res) {
+  app.get('/config', function (req, res) {
     fs.readFile('config.cfg', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
@@ -188,7 +188,7 @@ ${respond}
       res.send(respond)
     });
   });
-  app.get('/logs', function(req, res) {
+  app.get('/logs', function (req, res) {
     function deHTML(input) {
       let dhout = input;
       dhout = dhout.replaceAll("&", "&amp;");
@@ -213,7 +213,7 @@ ${respond}
       res.send(respond)
     });
   });
-  app.get('/config', function(req, res) {
+  app.get('/config', function (req, res) {
     function deHTML(input) {
       let dhout = input;
       dhout = dhout.replaceAll("&", "&amp;");
@@ -238,14 +238,14 @@ ${respond}
     });
   })
   app.get('/postHome', (req, res) => {
-    if (req.query["post"] == null) {res.send(`{"error":true,"type":"E:101 | Invalid arguments"}`); return}
+    if (req.query["post"] == null) { res.send(`{"error":true,"type":"E:101 | Invalid arguments"}`); return }
     bot.post(`${req.query["post"]}`)
     res.send(`{"error":false"}`)
   });
-  app.get('/messages', function(req, res) {
+  app.get('/messages', function (req, res) {
     res.send(welcome_messages.get("verified").join("<br>"))
   });
-  app.get('/', function(req, res) {
+  app.get('/', function (req, res) {
     fs.readFile('ulist', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
@@ -273,7 +273,7 @@ ${respond}
       });
     });
   });
-  app.get('/userlist', function(req, res) {
+  app.get('/userlist', function (req, res) {
     fs.readFile('ulist', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
@@ -304,7 +304,7 @@ try {
     //check if it is a command
     var isCommand = message.startsWith(prefix) || message.startsWith("@wb")
     let command = message.split(" ")[1]
-    if(command != null) {
+    if (command != null) {
       command = command.toLowerCase()
     } else {
       command = "ping"
@@ -314,22 +314,22 @@ try {
     message = message.split(" ")
 
     // console.log(`Message! ${message} : ${isCommand} :${args}`) // debug
-    
-    
+
+
     // yay command!
     if (isCommand) {
-      if(!config.settings.consoleInput) console.log(`${user} is using the command ${command}`)
+      if (!config.settings.consoleInput) console.log(`${user} is using the command ${command}`)
       log(`${user} used the command ${command}`)
       if (db.get(`${user}-ban-end`) >= getunix()) {
         var cooldown_left = db.get(`${user}-ban-end`) - getunix()
         bot.post(`You are banned for ${db.get(`${user}-ban-reason`)} for ${cooldown_left} more second${cooldown_left = 1 ? "s" : ""}`, origin)
       } else {
-        var commandParams = {user, message, origin, command, args}
+        var commandParams = { user, message, origin, command, args }
         // var mentioned_user = args[0].replaceAll("@","")
         if (admins.includes(user) && admincommands.includes(command)) { //Admin commands
           switch (command) {
             case ("eval"):
-              if(args.length == 0) {
+              if (args.length == 0) {
                 bot.post(`[ℹ︎] Cannot evaluate "${args.join(" ")}"!`, origin)
                 return
               }
@@ -342,12 +342,12 @@ try {
               break;
             case ("ban"):
               db.sync()
-              if(Number(args[1]) == args[1]) {
-                if(args.length > 2) {
+              if (Number(args[1]) == args[1]) {
+                if (args.length > 2) {
                   var reason = args.slice(2).join(" ")
                   var time = getunix() + Number(args[1])
                   var banneduser = args[0]
-                  db.set(`${banneduser}-ban-end`,    time)
+                  db.set(`${banneduser}-ban-end`, time)
                   db.set(`${banneduser}-ban-reason`, reason)
                 }
               }
@@ -355,34 +355,34 @@ try {
             case ("wordle"):
               let wordleArgs = (args.splice(1))
               let wordleCommandCommand = (args[0])
-              let wordleCommandArgs = {user, message, origin, wordleCommandCommand, wordleArgs}
+              let wordleCommandArgs = { user, message, origin, wordleCommandCommand, wordleArgs }
               wordleCommand(wordleCommandArgs)
               break;
             case ("unban"):
               db.sync()
-              if(args.length > 0) {
+              if (args.length > 0) {
                 var banneduser = args[0]
-                db.set(`${banneduser}-ban-end`,    0)
+                db.set(`${banneduser}-ban-end`, 0)
               }
               break;
             case ("reset"):
               db.sync()
-              if(args.length > 0) {
+              if (args.length > 0) {
                 var resetuser = args[0]
-                db.set(`${resetuser}-money`,    0)
+                db.set(`${resetuser}-money`, 0)
               }
               break;
             case ("shell"):
               exec(args.join(" "), (error, stdout, stderr) => {
-                  if (error) {
-                      bot.post(`**Error (exec)**\n\`\`\`\n${error.message}\`\`\``, origin);
-                      return;
-                  }
-                  if (stderr) {
-                      bot.post(`**Error (shell)**\n\`\`\`\n${stderr}\`\`\``, origin);
-                      return;
-                  }
-                  bot.post(`**Success**\n\`\`\`\n${stdout}\`\`\``, origin);
+                if (error) {
+                  bot.post(`**Error (exec)**\n\`\`\`\n${error.message}\`\`\``, origin);
+                  return;
+                }
+                if (stderr) {
+                  bot.post(`**Error (shell)**\n\`\`\`\n${stderr}\`\`\``, origin);
+                  return;
+                }
+                bot.post(`**Success**\n\`\`\`\n${stdout}\`\`\``, origin);
               });
               break;
             case ("update"):
@@ -393,7 +393,7 @@ try {
               bot.post(`Shutting down, goodbye!`)
               await delay(1500);
               throw new Error("Shut down")
-  
+
             case ("suggestions"):
               welcome_messages.sync()
               switch (args[0]) {
@@ -412,7 +412,7 @@ try {
                       tempb.push(aprooved_message)
                       welcome_messages.set("verified", tempb)
                       bot.post(`Message "${aprooved_message}" aprooved ; ${temp.join(",")}`, origin)
-  
+
                     } else {
                       bot.post(`Message №${args[1]} not found`, origin)
                     }
@@ -432,7 +432,7 @@ try {
                       }
                       welcome_messages.set("suggested", temp)
                       bot.post(`Message "${aprooved_message}" denied`, origin)
-  
+
                     } else {
                       bot.post(`Message №${args[1]} not found`, origin)
                     }
@@ -445,7 +445,7 @@ try {
                   break;
               }
               break;
-  
+
             case ("restart"):
               log(`: Bot was restarted by ${user}`)
               bot.post(`Restarting...`)
@@ -516,28 +516,28 @@ try {
               bot.post(`=== ${bot.version} ===\n${update.changelog}`, origin)
               break;
             default:
-              if(admincommands.includes(command)) {
+              if (admincommands.includes(command)) {
                 bot.post(`Command "${command}" is admin-only`, origin)
               } else {
                 bot.post(`Command "${command}" was not found`, origin)
               }
               break;
-            }
           }
         }
       }
-  
+    }
+
   });
-  
+
   bot.onMessage((messageData) => {
     // if (messageData.cmd == "pmsg") { 
     //    bot.send_packet({cmd:"pmsg", val:"I:100 | Bot", id: messageData.origin})
     // }
-    if (config.settings.logCL == "true") {log(`[CL] ${messageData} (${config.settings.logCL})`);}
+    if (config.settings.logCL == "true") { log(`[CL] ${messageData} (${config.settings.logCL})`); }
     var JSONdata = JSON.parse(messageData)
     switch (JSONdata["cmd"]) {
       case ("ulist"):
-        fs.writeFile("ulist", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)), function(err) {
+        fs.writeFile("ulist", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)), function (err) {
           if (err) {
             return console.error(err);
           }
@@ -548,7 +548,7 @@ try {
         }
     }
   });
-  
+
   bot.onClose(() => {
     console.log('bot is ded');
     // rl.close()
@@ -568,7 +568,7 @@ try {
         console.error(err);
         return;
       }
-      random_message=random_message.replaceAll("$(lnCount)$", String(data.split('\n').length))
+      random_message = random_message.replaceAll("$(lnCount)$", String(data.split('\n').length))
       config.settings.welcomeMessages.forEach((a, i) => {
         bot.post(`${random_message}\nBot version: ${update.version}`, a);
       })
@@ -585,11 +585,13 @@ try {
         }
       )
     });
-    if(isReloaded) return
-    rl = (async () => {consoleInput(createInterface({
-      input: process.stdin,
-      output: process.stdout
-    }),bot,username)})()
+    if (isReloaded) return
+    rl = (async () => {
+      consoleInput(createInterface({
+        input: process.stdin,
+        output: process.stdout
+      }), bot, username)
+    })()
   });
 } catch (erroring) {
   log(`! Error! ${erroring}`)
