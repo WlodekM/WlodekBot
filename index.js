@@ -1,14 +1,14 @@
 
 // stop()
 import Bot from "meowerbot";
-import fetch from "node-fetch";
+// import fetch from "node-fetch";
 import { exec } from "child_process";
 import * as dotenv from "dotenv";
 import JSONdb from "simple-json-db";
-import path from "path";
+// import path from "path";
 import { log } from "./libs/logs.js";
 import fs from 'fs'
-import http from "https"
+// import http from "https"
 import express from 'express'
 import { input as consoleInput } from "./libs/consoleInput.js"
 import { createInterface } from 'readline';
@@ -24,6 +24,7 @@ import { workCommand }               from "./commands/workCommand.js";
 import { roastCommand }              from "./commands/roastCommand.js";
 import { whoisCommand }              from "./commands/whoisCommand.js";
 import { ulistCommand }              from "./commands/ulistCommand.js";
+import { updateCommand }             from "./commands/updateCommand.js";
 import { inventoryCommand }          from "./commands/inventoryCommand.js";
 import { leaderboardCommand }        from "./commands/leaderboardCommand.js";
 import { help as helpCommand }       from "./commands/help.js"
@@ -88,7 +89,18 @@ export const commandTags = {
   "buy":                   ["ECONOMY"],
 }
 var commands = Object.keys(help)
-const admincommands = ['eval', 'shutdown', 'restart', "update", "suggestions","ban","reset","unban", "wordle"]
+const admincommands = [
+  'eval', 
+  'shutdown',
+  'restart', 
+  "update", 
+  "suggestions",
+  "ban",
+  "reset",
+  "unban", 
+  "wordle", 
+  "shell"
+]
 const adminlevels = [
   "User",
   "Lower moderator",
@@ -323,9 +335,9 @@ try {
               }
               try {
                 var evaluated = eval(args.join(" "))
-                bot.post(`[✔︎] Evaluation succes!\n${evaluated}`, origin)
+                bot.post(`[✔︎] Evaluation success!\n${evaluated}`, origin)
               } catch (err) {
-                bot.post(`[⚠︎] Evaluation failed!\n${err}`)
+                bot.post(`[⚠︎] Evaluation failed!\n${err}`, origin)
               }
               break;
             case ("ban"):
@@ -360,14 +372,25 @@ try {
                 db.set(`${resetuser}-money`,    0)
               }
               break;
+            case ("shell"):
+              exec(args.join(" "), (error, stdout, stderr) => {
+                  if (error) {
+                      bot.post(`**Error (exec)**\n\`\`\`\n${error.message}\`\`\``, origin);
+                      return;
+                  }
+                  if (stderr) {
+                      bot.post(`**Error (shell)**\n\`\`\`\n${stderr}\`\`\``, origin);
+                      return;
+                  }
+                  bot.post(`**Success**\n\`\`\`\n${stdout}\`\`\``, origin);
+              });
+              break;
             case ("update"):
+              updateCommand(commandParams);
+              break;
             case ("shutdown"):
               log(`: Bot was shutdown by ${user}`)
-              if (command == "update") {
-                bot.post(`Updating... this can take up to 5 minutes`)
-              } else {
-                bot.post(`Shutting down, goodbye!`)
-              }
+              bot.post(`Shutting down, goodbye!`)
               await delay(1500);
               throw new Error("Shut down")
   
