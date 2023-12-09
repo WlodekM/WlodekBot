@@ -13,6 +13,7 @@ import express from 'express'
 import { input as consoleInput } from "./libs/consoleInput.js"
 import { createInterface } from 'readline';
 import open from "open"
+import path from "path"
 
 // commands
 import { joke } from "./commands/joke.js"
@@ -25,10 +26,12 @@ import { roastCommand } from "./commands/roastCommand.js";
 import { whoisCommand } from "./commands/whoisCommand.js";
 import { ulistCommand } from "./commands/ulistCommand.js";
 import { updateCommand } from "./commands/updateCommand.js";
+import { inviteCommand } from "./commands/gcInvite/command.js";
 import { inventoryCommand } from "./commands/inventoryCommand.js";
 import { leaderboardCommand } from "./commands/leaderboardCommand.js";
 import { help as helpCommand } from "./commands/help.js"
 import { message as wordleCommand } from "./commands/wordle/command.js"
+import { bridgeCommand, OnMessage as uniMessage } from "./commands/uniBridge.js";
 
 dotenv.config();
 export let config, configAuth
@@ -72,6 +75,8 @@ export const help = {
   "shop": "See what you can buy",
   "buy": "Buy useless items",
   "rost": "Roast someone with my roasting skillz",
+  "uniBridge": "WIP",
+  "invite": "Make an invite to a group chat"
 }
 export const commandTags = {
   "help": ["BOT"],
@@ -87,6 +92,8 @@ export const commandTags = {
   "leaderboard": ["ECONOMY"],
   "shop": ["ECONOMY"],
   "buy": ["ECONOMY"],
+  "invite": ["UTILITY"]
+  // "uniBridge": ["OTHER"]
 }
 var commands = Object.keys(help)
 const admincommands = [
@@ -99,7 +106,8 @@ const admincommands = [
   "reset",
   "unban",
   "wordle",
-  "shell"
+  "shell",
+  "uniBridge"
 ]
 const adminlevels = [
   "User",
@@ -156,6 +164,7 @@ const welcome_messages = new JSONdb("./messages.json");
 
 export const db = new JSONdb("./db.json");
 export const shop = new JSONdb("./shop.json");
+export const invites = new JSONdb("./commands/gcInvite/invites.json")
 export const bot = new Bot()
 const admins = config.bot.admins;
 const server = config.urls.server
@@ -287,14 +296,14 @@ ${respond}
   app.use(express.static('public'));
   app.listen(port, () => {
     console.log(`The website is up and is on port ${port}`)
-    open("http://localhost:3000/", config.settings.browser);
+    // open("http://localhost:3000/", config.settings.browser);
   });
 })
 if (config.settings.website) website()
 
 // ------------------------------------------------------------- //
 try {
-  bot.onPost(async (user, message, origin) => {
+  bot.onPost((user, message, origin) => {
     // log post
     if (!origin) {
       log(`${user}: ${message} (in home)`)
@@ -313,8 +322,12 @@ try {
     args = args.splice(1).splice(1)
     message = message.split(" ")
 
+
+    uniMessage(message, origin, user)
+
     // console.log(`Message! ${message} : ${isCommand} :${args}`) // debug
 
+    if (user == "Server") return
 
     // yay command!
     if (isCommand) {
@@ -391,7 +404,7 @@ try {
             case ("shutdown"):
               log(`: Bot was shutdown by ${user}`)
               bot.post(`Shutting down, goodbye!`)
-              await delay(1500);
+              delay(1500);
               throw new Error("Shut down")
 
             case ("suggestions"):
@@ -449,8 +462,11 @@ try {
             case ("restart"):
               log(`: Bot was restarted by ${user}`)
               bot.post(`Restarting...`)
-              await delay(1500);
+              delay(1500);
               process.exit(1)
+              break;
+            case ("ub"):
+              bridgeCommand(commandParams)
               break;
           }
         } else {
@@ -458,11 +474,15 @@ try {
             case ("help"):
               helpCommand(commandParams)
               break;
+            case ("invite"):
+              inviteCommand(commandParams)
+              break;
             case ("ping"):
               bot.post(`Hello, i'm ${username} - a multipurpose bot!\nMy prefix is \`@${username}\` use \`@${username} help\` to find out about my commands`, origin)
               break;
             case ("http"):
               httpCommand(commandParams)
+              break;
             case ("balance"):
               balCommand(commandParams)
               break;
@@ -558,33 +578,77 @@ try {
     bot.login(username, password, server)
   });
   bot.onLogin(() => {
+    // use this code to read nu mber of lines in all js files
+
+    function countLinesInFile(filePath) {
+      try {
+        const data = fs.readFileSync(filePath, 'utf-8');
+        return data.split('\n').length;
+      } catch (err) {
+        log(`! Error reading file ${filePath}: ${err}`);
+        return 0;
+      }
+    }
+
+    function readFilesInDirectory(directoryPath) {
+      try {
+        const files = fs.readdirSync(directoryPath);
+
+        let totalLines = 0;
+
+        files.forEach(file => {
+          const filePath = path.join(directoryPath, file);
+          try {
+            const stats = fs.statSync(filePath);
+
+            if (stats.isDirectory()) {
+              // Handle directories if needed
+            } else if (stats.isFile() && path.extname(file) === '.js') {
+              // Process only .js files
+              const lines = countLinesInFile(filePath);
+              totalLines += lines;
+              // console.log(`File: ${filePath}, Lines: ${lines}`);
+            }
+          } catch (err) {
+            log(`! Error processing file ${filePath}: ${err}`);
+          }
+        });
+
+        return totalLines;
+      } catch (err) {
+        log(`! Error reading files: ${err}`);
+        return 0;
+      }
+    }
+    let lines = readFilesInDirectory("commands/")
+    // const files = fs.readdirSync("");
+    let mainFileLength = String(fs.readFileSync('index.js')).split('\n').length
+
+    // console.log(lines, mainFileLength, lines + mainFileLength)
+
+    lines = + mainFileLength
+
+
     log(`: Logged on as user ${username}`)
     welcome_messages.sync()
     var messages = welcome_messages.get("verified")
     var random_message = messages[Math.floor(Math.random() * messages.length)].replaceAll("${username}", username)
     // var random_message = "$(lnCount)$ test"
-    fs.readFile('index.js', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      random_message = random_message.replaceAll("$(lnCount)$", String(data.split('\n').length))
-      config.settings.welcomeMessages.forEach((a, i) => {
-        bot.post(`${random_message}\nBot version: ${update.version}`, a);
-      })
-      bot.send(
-        {
-          "cmd": "direct",
+    random_message = random_message.replaceAll("$(lnCount)$", String(lines))
+    config.settings.welcomeMessages.forEach((a, i) => {
+      bot.post(`${random_message}\nBot version: ${update.version}`, a);
+    })
+    bot.send(
+      {
+        "cmd": "direct",
+        "val": {
+          "cmd": "update_config",
           "val": {
-            "cmd": "update_config",
-            "val": {
-              "quote": `v${update.version} | ${String(data.split('\n').length)} lines of code | ${random_message}`
-            }
-          },
-          "listener": "listener_1538442"
+            "quote": `v${update.version} | ${String(lines)} lines of code | ${random_message}`
+          }
         }
-      )
-    });
+      }
+    )
     if (isReloaded) return
     rl = (async () => {
       consoleInput(createInterface({
