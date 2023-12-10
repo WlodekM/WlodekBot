@@ -36,7 +36,7 @@ export function inviteCommand({user, message, origin, command, args}) {
     }
 }
 function addInvite(gc) {
-    let len = Object.keys(invites.JSON).length
+    let len = Object.keys(invites.JSON()).length
     let randomNum = ()=>{return Math.floor(Math.random() * 9)}
     let ID = `${len}-${randomNum()}${randomNum()}${randomNum()}`
     invites.set(ID, gc)
