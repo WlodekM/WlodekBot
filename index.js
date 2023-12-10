@@ -255,7 +255,7 @@ ${respond}
     res.send(welcome_messages.get("verified").join("<br>"))
   });
   app.get('/', function (req, res) {
-    fs.readFile('ulist', 'utf8', (err, data) => {
+    fs.readFile('ulist.txt', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
         return;
@@ -550,14 +550,14 @@ try {
   });
 
   bot.onMessage((messageData) => {
-    // if (messageData.cmd == "pmsg") { 
-    //    bot.send_packet({cmd:"pmsg", val:"I:100 | Bot", id: messageData.origin})
-    // }
+    if (messageData.cmd == "pmsg") { 
+       bot.send_packet({cmd:"pmsg", val:"I:100 | Bot", id: messageData.origin})
+    }
     if (config.settings.logCL == "true") { log(`[CL] ${messageData} (${config.settings.logCL})`); }
     var JSONdata = JSON.parse(messageData)
     switch (JSONdata["cmd"]) {
       case ("ulist"):
-        fs.writeFile("ulist", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)), function (err) {
+        fs.writeFile("ulist.txt", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)), function (err) {
           if (err) {
             return console.error(err);
           }

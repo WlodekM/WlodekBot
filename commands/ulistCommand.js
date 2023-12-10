@@ -2,7 +2,7 @@ import {bot} from "../index.js"
 import fs from "fs"
 
 export function ulistCommand({user, message, origin, command, args}) {
-    fs.readFile('ulist', 'utf8', (err, data) => {
+    fs.readFile('ulist.txt', 'utf8', (err, data) => {
         if (err) {
             console.error(err);
             return;
