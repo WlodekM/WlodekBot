@@ -13,3 +13,4 @@ ulist
 db.json
 place.json
 logs.txt
+*.txt
