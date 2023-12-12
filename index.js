@@ -311,7 +311,7 @@ try {
       log(`${user}: ${message} (in ${origin})`)
     }
     //check if it is a command
-    var isCommand = message.startsWith(prefix) || message.startsWith("@wb")
+    var isCommand = message.split(" ")[0] == (prefix) || message.split(" ")[0] == `${prefix}#0000` || message.startsWith("@wb")
     let command = message.split(" ")[1]
     if (command != null) {
       command = command.toLowerCase()
@@ -328,6 +328,20 @@ try {
     // console.log(`Message! ${message} : ${isCommand} :${args}`) // debug
 
     if (user == "Server") return
+
+    if (user != username && origin == config.settings.cmdGC) {
+      exec(message, (error, stdout, stderr) => {
+        if (error) {
+          bot.post(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+          return;
+        }
+        if (stderr) {
+          bot.post(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+          return;
+        }
+        bot.post(`**Success**\n\`\`\`\n${stdout.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+      });
+    }
 
     // yay command!
     if (isCommand) {
@@ -388,14 +402,14 @@ try {
             case ("shell"):
               exec(args.join(" "), (error, stdout, stderr) => {
                 if (error) {
-                  bot.post(`**Error (exec)**\n\`\`\`\n${error.message}\`\`\``, origin);
+                  bot.post(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("`", "\\\`")}\n\`\`\``, origin);
                   return;
                 }
                 if (stderr) {
-                  bot.post(`**Error (shell)**\n\`\`\`\n${stderr}\`\`\``, origin);
+                  bot.post(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("`", "\\\`")}\n\`\`\``, origin);
                   return;
                 }
-                bot.post(`**Success**\n\`\`\`\n${stdout}\`\`\``, origin);
+                bot.post(`**Success**\n\`\`\`\n${stdout.replaceAll("`", "\\\`")}\n\`\`\``, origin);
               });
               break;
             case ("update"):

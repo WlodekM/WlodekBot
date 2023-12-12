@@ -1,0 +1,47 @@
+{
+    "gc": {
+        "habsja-fjhahdbhv-ndviyhdui-totalyValidGC-ID": {
+            "roles": [
+                {
+                    "name": "default",
+                    "permissions": {
+                        "canChat": true,
+                        "canEmbed": true,
+                        "canAdd": false,
+                        "moderator": false,
+                        "canInvite": true
+                    }
+                },
+                {
+                    "name": "🔴 Discord moderator",
+                    "permissions": {
+                        "canChat": true,
+                        "canEmbed": true,
+                        "canAdd": true,
+                        "moderator": true,
+                        "canInvite": true
+                    }
+                }
+            ],
+            "members": {
+                "WlodekM3": {
+                    "roles": ["default", "🔴 Discord moderator"],
+                    "banned": false
+                },
+                "Roblox888i": {
+                    "roles": ["default"],
+                    "banned": true
+                }
+            },
+            "invites": ["0-000-wlb"],
+            "owner": "WlodekM3"
+        }
+    },
+    "invites": {
+        "0-000-wlb": {
+            "id": "habsja-fjhahdbhv-ndviyhdui-totalyValidGC-ID",
+            "name": "GroupCat",
+            "user": "WlodekM3"
+        }
+    }
+}

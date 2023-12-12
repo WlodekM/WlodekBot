@@ -21,8 +21,9 @@ export function help({user, message, origin, command, args}) {
           const element = helpArray[key];
           msg += "\n\n" + `=== ${key} ===` + "\n"
           element.forEach(elementi => {
-            msg += elementi + " "
+            msg += elementi + ", "
           });
+          msg += "\n"
         }
       }
       bot.post(msg, origin)
