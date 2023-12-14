@@ -172,7 +172,7 @@ bot.version = update.version
 const app = express()
 const port = 3000;
 //express (website)
-var website = (() => {
+const website = (() => {
   app.set('trust proxy', true)
   app.get('/api', (req, res) => {
     res.send('Hello World!, the api is in progress')
@@ -300,6 +300,24 @@ ${respond}
   });
 })
 if (config.settings.website) website()
+
+const checkFiles = () => {
+  function checkFile(file, content) {
+    if(!fs.existsSync(file)) fs.writeFileSync(file, content)
+  }
+  checkFile("ulist.txt")
+  checkFile("logs.txt")
+
+  checkFile("db.json", "{}")
+  checkFile("invites.json", "{}")
+  checkFile("messages.json", "{}")
+  checkFile("shop.json", "{}")
+  
+  checkFile("config.cfg", "{}")
+}
+
+// Check if files like logs.txt exist
+checkFiles()
 
 // ------------------------------------------------------------- //
 try {
@@ -571,11 +589,7 @@ try {
     var JSONdata = JSON.parse(messageData)
     switch (JSONdata["cmd"]) {
       case ("ulist"):
-        fs.writeFile("ulist.txt", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)), function (err) {
-          if (err) {
-            return console.error(err);
-          }
-        })
+        fs.writeFileSync("ulist.txt", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)))
       case ("statuscode"):
         if (JSONdata["val"].includes("E")) {
           log(`! ${JSONdata["val"]}`)
