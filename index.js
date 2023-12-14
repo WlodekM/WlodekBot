@@ -303,7 +303,9 @@ if (config.settings.website) website()
 
 const checkFiles = () => {
   function checkFile(file, content) {
-    if(!fs.existsSync(file)) fs.writeFileSync(file, content)
+    if(fs.existsSync(file)) return;
+    fs.writeFileSync(file, content)
+    log(`! File ${file} not found`)
   }
   checkFile("ulist.txt")
   checkFile("logs.txt")
@@ -312,7 +314,7 @@ const checkFiles = () => {
   checkFile("invites.json", "{}")
   checkFile("messages.json", "{}")
   checkFile("shop.json", "{}")
-  
+
   checkFile("config.cfg", "{}")
 }
 
@@ -322,6 +324,13 @@ checkFiles()
 // ------------------------------------------------------------- //
 try {
   bot.onPost((user, message, origin) => {
+    function respond(text, origin) {
+      if (text.split().length < 4000) {
+        bot.post(text, origin)
+        return;
+      }
+      bot.post(text.slice(3996) + "...")
+    }
     // log post
     if (!origin) {
       log(`${user}: ${message} (in home)`)
@@ -334,7 +343,7 @@ try {
     if (command != null) {
       command = command.toLowerCase()
     } else {
-      command = "ping"
+      command = "mention"
     }
     var args = message.split(" ")
     args = args.splice(1).splice(1)
@@ -420,14 +429,14 @@ try {
             case ("shell"):
               exec(args.join(" "), (error, stdout, stderr) => {
                 if (error) {
-                  bot.post(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+                  respond(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("`", "\\\`")}\n\`\`\``, origin);
                   return;
                 }
                 if (stderr) {
-                  bot.post(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+                  respond(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("`", "\\\`")}\n\`\`\``, origin);
                   return;
                 }
-                bot.post(`**Success**\n\`\`\`\n${stdout.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+                respond(`**Success**\n\`\`\`\n${stdout.replaceAll("`", "\\\`")}\n\`\`\``, origin);
               });
               break;
             case ("update"):
@@ -509,8 +518,9 @@ try {
             case ("invite"):
               inviteCommand(commandParams)
               break;
-            case ("ping"):
-              bot.post(`Hello, i'm ${username} - a multipurpose bot!\nMy prefix is \`@${username}\` use \`@${username} help\` to find out about my commands`, origin)
+            case ("mention"):
+              bot.post(`Hello, i'm ${username} - a multipurpose bot!\n\
+              My prefix is \`@${username}\` use \`@${username} help\` to find out about my commands`, origin)
               break;
             case ("http"):
               httpCommand(commandParams)
@@ -545,7 +555,9 @@ try {
               break;
             case ("info"):
             case ("botinfo"):
-              bot.post(`Source code: https://github.com/WlodekM/WlodekBot\nCreator: @WlodekM3\nUptime: [WIP]`, origin)
+              bot.post(`Source code: https://github.com/WlodekM/WlodekBot\n\
+              Creator: @WlodekM3\n\
+              Uptime: [WIP]`, origin)
               break;
             case ("userlist"):
               ulistCommand(commandParams)
@@ -562,10 +574,10 @@ try {
               }
               break;
             case ("adminlist"):
-              bot.post(admins.join(", "), origin)
+              bot.post(`My admins are: ${admins.join(", ")}`, origin)
               break;
             case ("changelog"):
-              bot.post(`=== ${bot.version} ===\n${update.changelog}`, origin)
+              bot.post(`# === ${bot.version} ===\n${update.changelog}`, origin)
               break;
             default:
               if (admincommands.includes(command)) {
