@@ -1,5 +1,6 @@
 import JSONdb from "simple-json-db";
 import {bot, invites} from "../../index.js"
+const gcDB = new JSONdb("gc.json")
 
 export function gcCommand({user, message, origin, command, args}) {
     let subCommand = args[0];
@@ -32,7 +33,10 @@ function inviteCommand({user, message, origin, command, args}) {
     let subArgs = args.splice(1);
     switch (subCommand) {
         case "new":
-            bot.post(`${addInvite(origin)}`, origin)
+            let invite = addInvite(origin)
+            if (!gcDB["gc"][origin]["invites"]) gcDB["gc"][origin]["invites"] = []
+            gcDB["gc"][origin]["invites"].push(invite)
+            bot.post(`${invite}`, origin);
             break;
         case "join":
             if(!invites.has(subArgs[0])) {
