@@ -174,6 +174,32 @@ const port = 3000;
 //express (website)
 const website = (() => {
   app.set('trust proxy', true)
+  app.use((req, res, next) => {
+
+    // -----------------------------------------------------------------------
+    // authentication middleware
+  
+    const auth = {login: configAuth.web.u, password: configAuth.web.p}
+  
+    // parse login and password from headers
+    const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
+    const [login, pass] = Buffer.from(b64auth, 'base64').toString().split(':')
+  
+    // Verify login and password are set and correct
+    if (login && pass && login === auth.login && pass === auth.password) {
+      // Access granted...
+      return next()
+    }
+
+    log(`# User at ${req.ip} tried to access website (Entered credentials: ${login}, ${pass})`)
+  
+    // Access denied...
+    res.set('WWW-Authenticate', 'Basic realm="401"') // change this
+    res.status(401).send('Authentication required.') // custom message
+  
+    // -----------------------------------------------------------------------
+  
+  })
   app.get('/api', (req, res) => {
     res.send('Hello World!, the api is in progress')
   })
