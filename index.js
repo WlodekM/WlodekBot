@@ -303,12 +303,13 @@ if (config.settings.website) website()
 
 const checkFiles = () => {
   function checkFile(file, content) {
-    if(fs.existsSync(file)) return;
-    fs.writeFileSync(file, content)
-    log(`! File ${file} not found`)
+    if(!fs.existsSync(file)) {
+      fs.writeFileSync(file, content)
+      log(`! File ${file} not found`)
+    }
   }
-  checkFile("ulist.txt")
-  checkFile("logs.txt")
+  checkFile("ulist.txt", "")
+  checkFile("logs.txt", "")
 
   checkFile("db.json", "{}")
   checkFile("invites.json", "{}")
