@@ -95,13 +95,8 @@ function strftime(sFormat, date) {
 export function log(text, next) {
   let logs
   if(!config.settings.log) return
-  fs.readFile('logs.txt', 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
+  if(typeof(text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d.%m.%Y %H:%M', new Date())}`
-    
-    fs.writeFile("logs.txt", `${content}\n`, { flag: "a+" }, (err) => {});
-  });
+    fs.appendFileSync("logs.txt", `${content}\n`, { flag: "a+" });
+  }
 }
