@@ -1,5 +1,15 @@
 import {bot, db, config} from "../index.js"
 
+function getunix() {
+    return (Math.floor(Date.now() / 1000))
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export function workCommand({user, message, origin, command, args}) {
     db.sync();
     if (!db.has(`${user}-money`)) db.set(`${user}-money`, 0);

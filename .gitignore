@@ -17,3 +17,4 @@ logs.txt
 *.txt
 ulist.txt
 commands/gcInvite/invites.json
+db.json
