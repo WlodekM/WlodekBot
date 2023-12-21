@@ -702,9 +702,7 @@ try {
     var random_message = messages[Math.floor(Math.random() * messages.length)].replaceAll("${username}", username)
     // var random_message = "$(lnCount)$ test"
     random_message = random_message.replaceAll("$(lnCount)$", String(lines))
-    config.settings.welcomeMessages.forEach((a, i) => {
-      bot.post(`${random_message}\nBot version: ${update.version}`, a);
-    })
+    // udate quote
     bot.send(
       {
         "cmd": "direct",
@@ -716,7 +714,10 @@ try {
         }
       }
     )
-    if (isReloaded) return
+    if (isReloaded) return // showier angy
+    config.settings.welcomeMessages.forEach((a, i) => {
+      bot.post(`${random_message}\nBot version: ${update.version}`, a);
+    })
     rl = (async () => {
       consoleInput(createInterface({
         input: process.stdin,
