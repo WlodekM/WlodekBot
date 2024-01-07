@@ -1,18 +1,14 @@
 
 // stop()
 import Bot from "meowerbot";
-// import fetch from "node-fetch";
 import { exec } from "child_process";
 import * as dotenv from "dotenv";
 import JSONdb from "simple-json-db";
-// import path from "path";
 import { log } from "./libs/logs.js";
 import fs from 'fs'
-// import http from "https"
 import express from 'express'
 import { input as consoleInput } from "./libs/consoleInput.js"
 import { createInterface } from 'readline';
-import open from "open"
 import path from "path"
 
 // commands
@@ -32,6 +28,7 @@ import { leaderboardCommand } from "./commands/leaderboardCommand.js";
 import { help as helpCommand } from "./commands/help.js"
 import { message as wordleCommand } from "./commands/wordle/command.js"
 import { bridgeCommand, OnMessage as uniMessage } from "./commands/uniBridge.js";
+import { giveCommand } from "./commands/giveCommand.js"
 
 dotenv.config();
 export let config, configAuth
@@ -579,6 +576,9 @@ try {
               break;
             case ("work"):
               workCommand(commandParams)
+              break;
+            case ("give"):
+              giveCommand(commandParams)
               break;
             case ("info"):
             case ("botinfo"):
