@@ -10,6 +10,8 @@ import express from 'express'
 import { input as consoleInput } from "./libs/consoleInput.js"
 import { createInterface } from 'readline';
 import path from "path"
+import { events, activeEvents } from "./libs/events.js";
+import { applyRules } from "./libs/uwu.js";
 
 // commands
 import { joke } from "./commands/joke.js"
@@ -373,6 +375,10 @@ try {
     args = args.splice(1).splice(1)
     message = message.split(" ")
 
+    if(activeEvents.includes("uwu")) {
+      bot.post = events.uwu.post
+    }
+
 
     uniMessage(message, origin, user)
 
@@ -535,85 +541,93 @@ try {
               break;
           }
         } else {
-          switch (command) {
-            case ("help"):
-              helpCommand(commandParams)
-              break;
-            case ("invite"):
-              inviteCommand(commandParams)
-              break;
-            case ("mention"):
-              bot.post(`Hello, i'm ${username} - a multipurpose bot!\n\
-              My prefix is \`@${username}\` use \`@${username} help\` to find out about my commands`, origin)
-              break;
-            case ("http"):
-              httpCommand(commandParams)
-              break;
-            case ("balance"):
-              balCommand(commandParams)
-              break;
-            case ("buy"):
-              buyCommand(commandParams)
-              break;
-            case ("joke"):
-              joke(commandParams)
-              break;
-            case ("roast"):
-              roastCommand(commandParams)
-              break;
-            case ("inv"):
-            case ("inventory"):
-              inventoryCommand(commandParams)
-              break;
-            case ("shop"):
-              shopCommand(commandParams)
-              break;
-            case ("lb"):
-            case ("top"):
-            case ("leader"):
-            case ("leaderboard"):
-              leaderboardCommand(commandParams)
-              break;
-            case ("work"):
-              workCommand(commandParams)
-              break;
-            case ("give"):
-              giveCommand(commandParams)
-              break;
-            case ("info"):
-            case ("botinfo"):
-              bot.post(`Source code: https://github.com/WlodekM/WlodekBot\n\
-              Creator: @WlodekM3\n\
-              Uptime: [WIP]`, origin)
-              break;
-            case ("userlist"):
-              ulistCommand(commandParams)
-              break;
-            case ("whois"):
-              whoisCommand(commandParams)
-              break;
-            case ("suggest"):
-              welcome_messages.sync()
-              if (args) {
-                bot.post(`${user} - ${args.join(" ")}`, config.settings.suggestGC)
-              } else {
-                bot.post("You need to suggest something", origin)
-              }
-              break;
-            case ("adminlist"):
-              bot.post(`My admins are: ${admins.join(", ")}`, origin)
-              break;
-            case ("changelog"):
-              bot.post(`# === ${bot.version} ===\n${update.changelog}`, origin)
-              break;
-            default:
-              if (admincommands.includes(command)) {
-                bot.post(`Command "${command}" is admin-only`, origin)
-              } else {
-                bot.post(`Command "${command}" was not found`, origin)
-              }
-              break;
+          function checkForCommand(command, isUwU=false) {
+            // console.log(isUwU ? applyRules("help")        : "help")
+            switch (command) {
+              case (isUwU ? applyRules("help")        : "help"):
+                helpCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("invite")      : "invite"):
+                inviteCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("mention")     : "mention"):
+                bot.post(`Hello, i'm ${username} - a multipurpose bot!\n\
+                My prefix is \`@${username}\` use \`@${username} help\` to find out about my commands`, origin)
+                break;
+              case (isUwU ? applyRules("http")        : "http"):
+                httpCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("balance")     : "balance"):
+                balCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("buy")         : "buy"):
+                buyCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("joke")        : "joke"):
+                joke(commandParams)
+                break;
+              case (isUwU ? applyRules("roast")       : "roast"):
+                roastCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("inv")         : "inv"):
+              case (isUwU ? applyRules("inventory")   : "inventory"):
+                inventoryCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("shop")        : "shop"):
+                shopCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("lb")          : "lb"):
+              case (isUwU ? applyRules("top")         : "top"):
+              case (isUwU ? applyRules("leader")      : "leader"):
+              case (isUwU ? applyRules("leaderboard") : "leaderboard"):
+                leaderboardCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("work")        : "work"):
+                workCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("give")        : "give"):
+                giveCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("info")        : "info"):
+              case (isUwU ? applyRules("botinfo")     : "botinfo"):
+                bot.post(`Source code: https://github.com/WlodekM/WlodekBot\n\
+                Creator: @WlodekM3\n\
+                Uptime: [WIP]`, origin)
+                break;
+              case (isUwU ? applyRules("userlist")    : "userlist"):
+                ulistCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("whois")       : "whois"):
+                whoisCommand(commandParams)
+                break;
+              case (isUwU ? applyRules("suggest")     : "suggest"):
+                welcome_messages.sync()
+                if (args) {
+                  bot.post(`${user} - ${args.join(" ")}`, config.settings.suggestGC)
+                } else {
+                  bot.post("You need to suggest something", origin)
+                }
+                break;
+              case (isUwU ? applyRules("adminlist")   : "adminlist"):
+                bot.post(`My admins are: ${admins.join(", ")}`, origin)
+                break;
+              case (isUwU ? applyRules("changelog")   : "changelog"):
+                bot.post(`# === ${bot.version} ===\n${update.changelog}`, origin)
+                break;
+              default:
+                if(!isUwU) {
+                  checkForCommand(command, true)
+                  return false
+                }
+                if (admincommands.includes(command)) {
+                  bot.post(`Command "${command}" is admin-only`, origin)
+                } else {
+                  bot.post(`Command "${command}" was not found`, origin)
+                }
+                break;
+            }
           }
+          checkForCommand(command, false)
         }
       }
     }

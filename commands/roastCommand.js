@@ -1,4 +1,5 @@
 import {bot,} from "../index.js"
+import fs from "fs"
 
 export function roastCommand({user, message, origin, command, args}) {
   if(args.length < 1) bot.post("You have to mention a user!")
