@@ -280,15 +280,15 @@ export const website = (() => {
         res.send(`<span style="color: limegreen">Success</span>`)
     });
     app.get('/api/htmx/shell', (req, res) => {
-        if (!req.query["cmd"]) { res.send(`<span style="color: red">No "cmd" argument</span>`); return }
+        if (!req.query["cmd"]) { return res.send(`<span style="color: red">No "cmd" argument</span>`);  }
         exec(req.query["cmd"], (error, stdout, stderr) => {
             if (error) {
-                return res.send(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("\n", "<br>")}\n\`\`\``, origin);
+                return res.send(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("\n", "<br>")}\n\`\`\``);
             }
             if (stderr) {
-                return res.send(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("\n", "<br>")}\n\`\`\``, origin);
+                return res.send(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("\n", "<br>")}\n\`\`\``);
             }
-            return res.send(`**Success**<br>${stdout.replaceAll("\n", "<br>")}`, origin);
+            return res.send(`**Success**<br>${stdout.replaceAll("\n", "<br>")}`);
         });
     });
     app.get('/api/htmx/logs', (req, res) => {
