@@ -8,6 +8,7 @@
     href="https://unpkg.com/98.css"
   >
   <link href="global.css" rel="stylesheet">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 
 <body>
@@ -16,6 +17,29 @@
       <h1 id="no-margin">WlodekBot!!</h1>
       <p>Welcome to WlodekBot's website!</p>
       <p>this will be like a dashboard in the future but im too lazy to do that now</p>
+      <h2>Dashboard omg so cool</h2>
+      <ul class="tree-view">
+        <li>
+          <b style="margin-bottom: 5px;font-size: large;">Shutdown</b>
+          <br>
+          <button hx-get="/api/htmx/shutdown" hx-target="#result-shutdown">
+            Shutdown the bot (and the website)
+          </button>
+          <span id="result-shutdown"></span>
+        </li>
+        <li>
+          <b style="margin-bottom: 5px;font-size: large;">Say stuff</b>
+          <br>
+          <form hx-get="/api/htmx/postHome" hx-target="#result-post">
+            <input type="text" name="post" id="post">
+            <input type="submit" value="Send!">
+          </form>
+          <span id="result-post"></span>
+        </li>
+      </ul>
+      <br>
+      <ul class="tree-view" hx-get="/api/htmx/logs" hx-trigger="every 2s"></ul>
+      <br>
       <div id="content">
         <div id="content-grid-container">
           <div id="main" class="body">

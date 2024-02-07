@@ -1,6 +1,9 @@
 import http from "https"
 
-export function joke({user, message, origin, command, args}) {
+export default {
+  command: "joke",
+  aliases: [],    
+  func({user, message, origin, command, args, bot}) {
   var result = '';
   const req = http.request(`https://official-joke-api.appspot.com/random_joke`, (res) => {
     // console.log(res.statusCode);
@@ -14,4 +17,5 @@ export function joke({user, message, origin, command, args}) {
       bot.post(`${result.setup}\n${result.punchline}`, origin)
     });
   });
+  }
 }

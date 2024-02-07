@@ -1,8 +1,68 @@
-import {commandTags, help as helpVar, bot} from "../index.js"
+export const help = {
+  "help": "Get info about my commands",
+  "botinfo": "Get some info about me and my creator",
+  "suggest": "Suggest a command",
+  "changelog": "See what's new",
+  "userlist": "Find out who's online",
+  "andminlist": "List of all admins",
+  "whois": "Get info about a user",
+  "balance": "See how empty your wallet is",
+  "work": `Earn money`,
+  "leaderboard": "See who's №1",
+  "shop": "See what you can buy",
+  "buy": "Buy useless items",
+  "rost": "Roast someone with my roasting skillz",
+  "uniBridge": "WIP",
+  "invite": "Make an invite to a group chat"
+}
+export const commandTags = {
+  "help": ["BOT"],
+  "botinfo": ["BOT"],
+  "suggest": ["BOT"],
+  "changelog": ["BOT"],
+  "userlist": ["USER"],
+  "adminlist": ["USER"],
+  "whois": ["USER"],
+  "roast": ["USER"],
+  "balance": ["ECONOMY"],
+  "work": ["ECONOMY"],
+  "leaderboard": ["ECONOMY"],
+  "shop": ["ECONOMY"],
+  "buy": ["ECONOMY"],
+  "invite": ["UTILITY"]
+  // "uniBridge": ["OTHER"]
+}
+var commandNames = Object.keys(help)
+const adminlevels = [
+  "User",
+  "Lower moderator",
+  "Moderator",
+  "Admin",
+  "System admin"
+]
+const admincommands = [
+  'eval',
+  'shutdown',
+  'restart',
+  "update",
+  "suggestions",
+  "ban",
+  "reset",
+  "unban",
+  "wordle",
+  "shell",
+  "uniBridge"
+]
+admincommands.forEach(element => {
+  commandTags[element] = ["ADMIN"]
+});
 
-export function help({user, message, origin, command, args}) {
-    if (args[0] in helpVar) {
-      bot.post(helpVar[args[0]], origin)
+export default {
+  command: "help",
+  aliases: ["?"],    
+  func({user, message, origin, command, args, bot}) {
+    if (args[0] in help) {
+      bot.post(help[args[0]], origin)
     } else {
       var msg = ""
       var helpArray = []
@@ -28,4 +88,5 @@ export function help({user, message, origin, command, args}) {
       }
       bot.post(msg, origin)
     }
+  }
 }

@@ -1,6 +1,36 @@
 import Seed from "./seed.js";
 
 // Code from OwO-mod (https://github.com/WlodekM/Vencord/)
+const faces = [
+    "(・`ω´・)",
+    ";;w;;",
+    "OwO",
+    "UwU",
+    ">w<",
+    "^w^",
+    "ÚwÚ",
+    "^-^",
+    ":3",
+    "x3",
+];
+const exclamations = ["!?", "?!!", "?!?1", "!!11", "?!?!"];
+const actions = [
+    "*blushes*",
+    "*whispers to self*",
+    "*cries*",
+    "*screams*",
+    "*sweats*",
+    "*twerks*",
+    "*runs away*",
+    "*screeches*",
+    "*walks away*",
+    "*sees bulge*",
+    "*looks at you*",
+    "*notices buldge*",
+    "*starts twerking*",
+    "*huggles tightly*",
+    "*boops your nose*",
+];
 const uwuMap = [
     [/(?:r|l)/g, "w"],
     [/(?:R|L)/g, "W"],

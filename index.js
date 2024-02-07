@@ -6,31 +6,35 @@ import * as dotenv from "dotenv";
 import JSONdb from "simple-json-db";
 import { log } from "./libs/logs.js";
 import fs from 'fs'
-import express from 'express'
 import { input as consoleInput } from "./libs/consoleInput.js"
 import { createInterface } from 'readline';
 import path from "path"
 import { events, activeEvents } from "./libs/events.js";
 import { applyRules } from "./libs/uwu.js";
+import { scan as scanCommands } from "./commands/commandManager.js";
+import { website } from "./website.js";
+
+const allCommands = await scanCommands()
+// console.log(allCommands)
 
 // commands
-import { joke } from "./commands/joke.js"
-import { balCommand } from "./commands/balCommand.js"
-import { buyCommand } from "./commands/buyCommand.js"
-import { httpCommand } from "./commands/http.js"
-import { shopCommand } from "./commands/shopCommand.js"
-import { workCommand } from "./commands/workCommand.js";
-import { roastCommand } from "./commands/roastCommand.js";
-import { whoisCommand } from "./commands/whoisCommand.js";
-import { ulistCommand } from "./commands/ulistCommand.js";
+// import { joke } from "./commands/joke.js"
+// import { balCommand } from "./commands/balCommand.js"
+// import { buyCommand } from "./commands/buyCommand.js"
+// import { httpCommand } from "./commands/http.js"
+// import { shopCommand } from "./commands/shopCommand.js"
+// import { workCommand } from "./commands/workCommand.js";
+// import { roastCommand } from "./commands/roastCommand.js";
+// import { whoisCommand } from "./commands/whoisCommand.js";
+// import { ulistCommand } from "./commands/ulistCommand.js";
 import { updateCommand } from "./commands/updateCommand.js";
-import { inviteCommand } from "./commands/gcInvite/command.js";
-import { inventoryCommand } from "./commands/inventoryCommand.js";
-import { leaderboardCommand } from "./commands/leaderboardCommand.js";
-import { help as helpCommand } from "./commands/help.js"
+// import { inviteCommand } from "./commands/gcInvite/command.js";
+// import { inventoryCommand } from "./commands/inventoryCommand.js";
+// import { leaderboardCommand } from "./commands/leaderboardCommand.js";
+// import { help as helpCommand } from "./commands/help.js"
 import { message as wordleCommand } from "./commands/wordle/command.js"
-import { bridgeCommand, OnMessage as uniMessage } from "./commands/uniBridge.js";
-import { giveCommand } from "./commands/giveCommand.js"
+// import { bridgeCommand, OnMessage as uniMessage } from "./commands/uniBridge.js";
+// import { giveCommand } from "./commands/giveCommand.js"
 
 dotenv.config();
 export let config, configAuth
@@ -51,7 +55,7 @@ try {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-const update = config.bot.update
+export const update = config.bot.update
 const username = configAuth.bot.username;
 const password = configAuth.bot.password;
 const API = config.urls.api;
@@ -60,41 +64,6 @@ const uptime = new Date().getTime();
 let rl
 let isReloaded = false
 
-export const help = {
-  "help": "Get info about my commands",
-  "botinfo": "Get some info about me and my creator",
-  "suggest": "Suggest a command",
-  "changelog": "See what's new",
-  "userlist": "Find out who's online",
-  "andminlist": "List of all admins",
-  "whois": "Get info about a user",
-  "balance": "See how empty your wallet is",
-  "work": `Earn money`,
-  "leaderboard": "See who's №1",
-  "shop": "See what you can buy",
-  "buy": "Buy useless items",
-  "rost": "Roast someone with my roasting skillz",
-  "uniBridge": "WIP",
-  "invite": "Make an invite to a group chat"
-}
-export const commandTags = {
-  "help": ["BOT"],
-  "botinfo": ["BOT"],
-  "suggest": ["BOT"],
-  "changelog": ["BOT"],
-  "userlist": ["USER"],
-  "adminlist": ["USER"],
-  "whois": ["USER"],
-  "roast": ["USER"],
-  "balance": ["ECONOMY"],
-  "work": ["ECONOMY"],
-  "leaderboard": ["ECONOMY"],
-  "shop": ["ECONOMY"],
-  "buy": ["ECONOMY"],
-  "invite": ["UTILITY"]
-  // "uniBridge": ["OTHER"]
-}
-var commands = Object.keys(help)
 const admincommands = [
   'eval',
   'shutdown',
@@ -108,46 +77,11 @@ const admincommands = [
   "shell",
   "uniBridge"
 ]
-const adminlevels = [
-  "User",
-  "Lower moderator",
-  "Moderator",
-  "Admin",
-  "System admin"
-]
-admincommands.forEach(element => {
-  commandTags[element] = ["ADMIN"]
-});
+
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-function leaderboard(userscores) {
-  let result = Object.entries(userscores)
-    .sort((a, b) => b[1] - a[1])
-    .map((p, index) => `${index + 1}: ${p[0]} - ${p[1]}`)
-    .join("\n");
-  return (result)
-}
-function formatshop(userscores) {
-  let result = Object.entries(userscores)
-    .sort((a, b) => b[1] - a[1])
-    .map((p) => `${p[0]} - ${p[1]}${config.settings.economy.currency}`)
-    .join("\n");
-  return (result)
-}
-function leaderboardarray(userscores) {
-  let result = Object.entries(userscores)
-    .sort((a, b) => b[1] - a[1])
-    .map((p, index) => `${p[0]} - ${p[1]}`)
-  return (result)
-}
-function leaderboardarrayplace(userscores) {
-  let result = Object.entries(userscores)
-    .sort((a, b) => b[1] - a[1])
-    .map((p, index) => p[0])
-  return (result)
 }
 function getunix() {
   return (Math.floor(Date.now() / 1000))
@@ -158,8 +92,7 @@ function toTitleCase(text) {
   );
 }
 
-
-const welcome_messages = new JSONdb("./messages.json");
+export const welcome_messages = new JSONdb("./messages.json");
 
 export const db = new JSONdb("./db.json");
 export const shop = new JSONdb("./shop.json");
@@ -168,167 +101,14 @@ export const bot = new Bot()
 const admins = config.bot.admins;
 const server = config.urls.server
 bot.version = update.version
-const app = express()
-const port = 3000;
+bot.update = update
 //express (website)
-const website = (() => {
-  app.set('trust proxy', true)
-  app.use((req, res, next) => {
 
-    // -----------------------------------------------------------------------
-    // authentication middleware
-  
-    const auth = {login: configAuth.web.u, password: configAuth.web.p}
-  
-    // parse login and password from headers
-    const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
-    const [login, pass] = Buffer.from(b64auth, 'base64').toString().split(':')
-  
-    // Verify login and password are set and correct
-    if (login && pass && login === auth.login && pass === auth.password) {
-      // Access granted...
-      return next()
-    }
-
-    log(`# User at ${req.ip} tried to access website (Entered credentials: ${login}, ${pass})`)
-  
-    // Access denied...
-    res.set('WWW-Authenticate', 'Basic realm="401"') // change this
-    res.status(401).send('Authentication required.') // custom message
-  
-    // -----------------------------------------------------------------------
-  
-  })
-  app.get('/api', (req, res) => {
-    res.send('Hello World!, the api is in progress')
-  })
-  app.get('/config', function (req, res) {
-    fs.readFile('config.cfg', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      let respond = data
-      respond = respond.split("\n").slice(-50).join("\n");
-      respond = `\
-      <head>\
-      <link rel="stylesheet" href="../logs.css"><meta name="color-scheme" content="light dark">\
-      </head>
-      <body>\
-        <textarea rows="${respond.split("\n").length}" cols="200">
-${respond}
-        </textarea>
-      <div id="end"></div></body>`
-      res.send(respond)
-    });
-  });
-  app.get('/logs', function (req, res) {
-    function deHTML(input) {
-      let dhout = input;
-      dhout = dhout.replaceAll("&", "&amp;");
-      dhout = dhout.replaceAll("<", "&lt;");
-      dhout = dhout.replaceAll(">", "&gt;");
-      dhout = dhout.replaceAll('"', "&quot;");
-      dhout = dhout.replaceAll("'", "&apos;");
-      return dhout;
-    }
-    fs.readFile('logs', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      let respond = data
-      respond = respond.split("\n").slice(-50).join("\n");
-      respond = `\
-      <head>\
-      <link rel="stylesheet" href="../logs.css"><meta name="color-scheme" content="light dark">\
-      </head><body>\
-      ${deHTML(respond).replaceAll("\n", "<br>")}<div id="end"></div></body>`
-      res.send(respond)
-    });
-  });
-  app.get('/config', function (req, res) {
-    function deHTML(input) {
-      let dhout = input;
-      dhout = dhout.replaceAll("&", "&amp;");
-      dhout = dhout.replaceAll("<", "&lt;");
-      dhout = dhout.replaceAll(">", "&gt;");
-      dhout = dhout.replaceAll('"', "&quot;");
-      dhout = dhout.replaceAll("'", "&apos;");
-      return dhout;
-    }
-    fs.readFile('config.cfg', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      let respond = data
-      respond = `\
-      <head>\
-      <link rel="stylesheet" href="../logs.css"><meta name="color-scheme" content="light dark">\
-      </head><body>\
-      ${deHTML(respond).replaceAll("\n", "<br>")}<div id="end"></div></body>`
-      res.send(respond)
-    });
-  })
-  app.get('/postHome', (req, res) => {
-    if (req.query["post"] == null) { res.send(`{"error":true,"type":"E:101 | Invalid arguments"}`); return }
-    bot.post(`${req.query["post"]}`)
-    res.send(`{"error":false"}`)
-  });
-  app.get('/messages', function (req, res) {
-    res.send(welcome_messages.get("verified").join("<br>"))
-  });
-  app.get('/', function (req, res) {
-    fs.readFile('ulist.txt', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      var userlist = JSON.parse(data)
-      var database_a = db.JSON()
-      var money_leaderboard = {}
-      for (const key in database_a) {
-        if (Object.hasOwnProperty.call(database_a, key)) {
-          const element = database_a[key];
-          if (key.includes("-money")) {
-            let keya = key.replaceAll("-money", "")
-            money_leaderboard[keya] = element
-          }
-        }
-      }
-      fs.readFile('public/index_a.htm', 'utf8', (err, data1) => {
-        var data2 = data1.replaceAll("[ULIST]", `<li>${userlist.join("</li>\n<li>")}</li>`)
-        data2 = data2.replaceAll("[LB]", `<ol><li>${leaderboardarray(money_leaderboard).join("</li>\n<li>")}</li></ol>`)
-        data2 = data2.replaceAll("[UPDATE]", `\
-        <h5 id="padding1">${update.version}</h5>\
-        <p id="paddingleft1">${update.changelog.replaceAll("\n", "<br>")}</p>`)
-        res.send(data2);
-      });
-    });
-  });
-  app.get('/userlist', function (req, res) {
-    fs.readFile('ulist', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      var userlist = JSON.parse(data)
-      var result = `<li>${userlist.join("</li>\n<li>")}</li>`
-      res.send(result);
-    });
-  });
-  app.use(express.static('public'));
-  app.listen(port, () => {
-    console.log(`The website is up and is on port ${port}`)
-    // open("http://localhost:3000/", config.settings.browser);
-  });
-})
 if (config.settings.website) website()
 
 const checkFiles = () => {
   function checkFile(file, content) {
-    if(!fs.existsSync(file)) {
+    if (!fs.existsSync(file)) {
       fs.writeFileSync(file, content)
       log(`! File ${file} not found`)
     }
@@ -375,12 +155,12 @@ try {
     args = args.splice(1).splice(1)
     message = message.split(" ")
 
-    if(activeEvents.includes("uwu")) {
+    if (activeEvents.includes("uwu")) {
       bot.post = events.uwu.post
     }
 
 
-    uniMessage(message, origin, user)
+    // uniMessage(message, origin, user)
 
     // console.log(`Message! ${message} : ${isCommand} :${args}`) // debug
 
@@ -408,7 +188,7 @@ try {
         var cooldown_left = db.get(`${user}-ban-end`) - getunix()
         bot.post(`You are banned for ${db.get(`${user}-ban-reason`)} for ${cooldown_left} more second${cooldown_left = 1 ? "s" : ""}`, origin)
       } else {
-        var commandParams = { user, message, origin, command, args }
+        var commandParams = { user, message, origin, command, args, bot }
         // var mentioned_user = args[0].replaceAll("@","")
         if (admins.includes(user) && admincommands.includes(command)) { //Admin commands
           switch (command) {
@@ -541,93 +321,27 @@ try {
               break;
           }
         } else {
-          function checkForCommand(command, isUwU=false) {
-            // console.log(isUwU ? applyRules("help")        : "help")
-            switch (command) {
-              case (isUwU ? applyRules("help")        : "help"):
-                helpCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("invite")      : "invite"):
-                inviteCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("mention")     : "mention"):
-                bot.post(`Hello, i'm ${username} - a multipurpose bot!\n\
-                My prefix is \`@${username}\` use \`@${username} help\` to find out about my commands`, origin)
-                break;
-              case (isUwU ? applyRules("http")        : "http"):
-                httpCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("balance")     : "balance"):
-                balCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("buy")         : "buy"):
-                buyCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("joke")        : "joke"):
-                joke(commandParams)
-                break;
-              case (isUwU ? applyRules("roast")       : "roast"):
-                roastCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("inv")         : "inv"):
-              case (isUwU ? applyRules("inventory")   : "inventory"):
-                inventoryCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("shop")        : "shop"):
-                shopCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("lb")          : "lb"):
-              case (isUwU ? applyRules("top")         : "top"):
-              case (isUwU ? applyRules("leader")      : "leader"):
-              case (isUwU ? applyRules("leaderboard") : "leaderboard"):
-                leaderboardCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("work")        : "work"):
-                workCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("give")        : "give"):
-                giveCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("info")        : "info"):
-              case (isUwU ? applyRules("botinfo")     : "botinfo"):
-                bot.post(`Source code: https://github.com/WlodekM/WlodekBot\n\
-                Creator: @WlodekM3\n\
-                Uptime: [WIP]`, origin)
-                break;
-              case (isUwU ? applyRules("userlist")    : "userlist"):
-                ulistCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("whois")       : "whois"):
-                whoisCommand(commandParams)
-                break;
-              case (isUwU ? applyRules("suggest")     : "suggest"):
-                welcome_messages.sync()
-                if (args) {
-                  bot.post(`${user} - ${args.join(" ")}`, config.settings.suggestGC)
-                } else {
-                  bot.post("You need to suggest something", origin)
+          function checkForCommand(commandName) {
+            let command = null
+            let commands = {}
+            // console.log("Checking for commands", Object.keys(allCommands).length)
+            for (const key in allCommands) {
+              if (Object.hasOwnProperty.call(allCommands, key)) {
+                const element = allCommands[key];
+                // console.log(`${commandName} == ${element.command}`)
+                if (commandName == element.command || element.aliases.includes(commandName)) {
+                  command = element
+                  break
                 }
-                break;
-              case (isUwU ? applyRules("adminlist")   : "adminlist"):
-                bot.post(`My admins are: ${admins.join(", ")}`, origin)
-                break;
-              case (isUwU ? applyRules("changelog")   : "changelog"):
-                bot.post(`# === ${bot.version} ===\n${update.changelog}`, origin)
-                break;
-              default:
-                if(!isUwU) {
-                  checkForCommand(command, true)
-                  return false
-                }
-                if (admincommands.includes(command)) {
-                  bot.post(`Command "${command}" is admin-only`, origin)
-                } else {
-                  bot.post(`Command "${command}" was not found`, origin)
-                }
-                break;
+              }
             }
+            if (!command) return bot.post(`Command "${commandName}" not found!`, origin)
+            console.log(`Found command that matches ${commandName} (${command.command})`)
+            command.func(
+              { user, message, origin, commandName, args, bot }
+            )
           }
-          checkForCommand(command, false)
+          checkForCommand(command)
         }
       }
     }
@@ -635,8 +349,8 @@ try {
   });
 
   bot.onMessage((messageData) => {
-    if (messageData.cmd == "pmsg") { 
-       bot.send_packet({cmd:"pmsg", val:"I:100 | Bot", id: messageData.origin})
+    if (messageData.cmd == "pmsg") {
+      bot.send_packet({ cmd: "pmsg", val: "I:100 | Bot", id: messageData.origin })
     }
     if (config.settings.logCL == "true") { log(`[CL] ${messageData} (${config.settings.logCL})`); }
     var JSONdata = JSON.parse(messageData)
@@ -712,26 +426,32 @@ try {
 
     log(`: Logged on as user ${username}`)
     welcome_messages.sync()
+    let lastStartup = fs.readFileSync("lastStartup.txt") ?? 0
     var messages = welcome_messages.get("verified")
     var random_message = messages[Math.floor(Math.random() * messages.length)].replaceAll("${username}", username)
     // var random_message = "$(lnCount)$ test"
     random_message = random_message.replaceAll("$(lnCount)$", String(lines))
-    // udate quote
-    bot.send(
-      {
-        "cmd": "direct",
-        "val": {
-          "cmd": "update_config",
+    if (getunix() - lastStartup > 600) {
+      fs.writeFileSync("lastStartup.txt", String(getunix()))
+      // udate quote
+      bot.send(
+        {
+          "cmd": "direct",
           "val": {
-            "quote": `v${update.version} | ${String(lines)} lines of code | ${random_message}`
+            "cmd": "update_config",
+            "val": {
+              "quote": `v${update.version} | ${String(lines)} lines of code | ${random_message}`
+            }
           }
         }
-      }
-    )
+      )
+    }
     if (isReloaded) return // showier angy
-    config.settings.welcomeMessages.forEach((a, i) => {
-      bot.post(`${random_message}\nBot version: ${update.version}`, a);
-    })
+    if (getunix() - lastStartup > 600) {
+      config.settings.welcomeMessages.forEach((a, i) => {
+        bot.post(`${random_message}\nBot version: ${update.version}`, a);
+      })
+    }
     rl = (async () => {
       consoleInput(createInterface({
         input: process.stdin,

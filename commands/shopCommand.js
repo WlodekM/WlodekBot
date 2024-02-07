@@ -1,4 +1,7 @@
-import {bot, db, shop, config} from "../index.js"
+import JSONdb from "simple-json-db";
+import fs from "fs"
+const db = new JSONdb("../db.json");
+const shop = new JSONdb("../shop.json");
 
 function formatshop(userscores) {
   let result = Object.entries(userscores)
@@ -8,11 +11,31 @@ function formatshop(userscores) {
   return (result)
 }
 
-export function shopCommand({user, message, origin, command, args}) {
+let config, configAuth
+try {
+  config = JSON.parse(fs.readFileSync('./config.cfg', 'utf8'))
+} catch (e) {
+  console.error("No config file found, please crete a config file!");
+  console.error(e);
+  process.exit()
+}
+try {
+  configAuth = JSON.parse(fs.readFileSync('./config-auth.cfg', 'utf8'))
+} catch (e) {
+  console.error("No config-auth file found, please crete a config-auth file!");
+  console.error(e);
+  process.exit()
+}
+
+export default {
+  command: "shell",
+  aliases: [],    
+  func({user, message, origin, command, args, bot}) {
     db.sync()
     shop.sync()
     if (!db.has(`${user}-money`)) {
       db.set(`${user}-money`, 0)
     }
     bot.post(`${formatshop(shop.JSON())}`)
+  }
 }

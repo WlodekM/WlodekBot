@@ -1,4 +1,5 @@
-import {bot, db} from "../index.js"
+import JSONdb from "simple-json-db";
+const db = new JSONdb("../db.json");
 
 function leaderboardarray(userscores) {
   let result = Object.entries(userscores)
@@ -13,7 +14,10 @@ function leaderboardarrayplace(userscores) {
   return (result)
 }
 
-export function leaderboardCommand({user, message, origin, command, args}) {
+export default {
+  command: "leaderboard",
+  aliases: ["lb", "top"],    
+  func({user, message, origin, command, args, bot}) {
     db.sync()
     var database_a = db.JSON()
     var money_leaderboard = {}
@@ -33,4 +37,5 @@ export function leaderboardCommand({user, message, origin, command, args}) {
       money_leaderboard = money_leaderboard.slice(0, 10)
     }
     bot.post(`${money_leaderboard.join("\n")}\n\nYou are №${user_place}`, origin)
+  }
 }

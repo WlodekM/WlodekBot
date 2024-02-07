@@ -1,0 +1,209 @@
+<!-- Standard "S" library -->
+<script class="sLib">
+    /**
+     * @returns {Element} element
+     */
+    function waitForElm(selector) {
+        return new Promise(resolve => {
+            if (document.querySelector(selector)) {
+                return resolve(document.querySelector(selector));
+            }
+
+            const observer = new MutationObserver(mutations => {
+                if (document.querySelector(selector)) {
+                    observer.disconnect();
+                    resolve(document.querySelector(selector));
+                }
+            });
+
+            observer.observe(document, {
+                childList: true,
+                subtree: true
+            });
+        });
+    }
+    /**
+     * @param {Element} element
+     */
+    function decorateElement(element) {
+        let resultingElement = element
+        function addFunction(funcName, property) {
+            if (element[property]) {
+                resultingElement[funcName] = ((a = null) => {
+                    if (a) element[property] = a
+                    return element[property]
+                })
+            }
+        }
+        function addLisserner(event, name) {
+            resultingElement[name] = ((cb, options = null) => {
+                resultingElement.addEventListener(event, cb, {})
+            })
+        }
+
+        addLisserner("click", "click")
+        addFunction("val", "value")
+        addFunction("html", "innerHTML")
+        addFunction("text", "innerText")
+        resultingElement.attr = (function(attr, val=null, cb) {
+            if(!val) {
+                if(cb) cb()
+                return this.getAttribute(attr)
+            }
+            this.setAttribute(attr, val)
+            if(cb) cb()
+            return this
+        })
+
+        resultingElement.load = (async function(url, cb) {
+            let resp = await fetch(url)
+            if(!resp.ok) {console.error(`Response code is not OK, response code is ${resp.status}`); return this}
+            this.innerHTML = await resp.text()
+            if(cb) cb()
+            return this
+        })
+
+        resultingElement.toggle = (function(cb){
+            resultingElement.style.display = (resultingElement.style.display == "none" ? "" : "none")
+            if (cb) cb()
+            return this
+        })
+        resultingElement.hide = (function(cb){
+            resultingElement.style.display = "none"
+            if (cb) cb()
+            return this
+        })
+        resultingElement.show = (function(cb){
+            resultingElement.style.display = ""
+            if (cb) cb()
+            return this
+        })
+
+        resultingElement.fadeOut = (function(duration=1000, cb){
+            let animation = this.animate(
+                [
+                    {
+                        // from
+                        opacity: 1,
+                    },
+                    {
+                        // to
+                        opacity: 0,
+                    },
+                ], {duration: duration}
+            )
+            animation.onfinish = (function(){resultingElement.hide()})
+            if(cb) cb()
+            return this
+        })
+        resultingElement.fadeIn = (function(duration=1000, cb){
+            if (resultingElement.style.display == "none") this.show()
+            let animation = this.animate(
+                [
+                    {
+                        // from
+                        opacity: 0,
+                    },
+                    {
+                        // to
+                        opacity: 1,
+                    },
+                ], {duration: duration}
+            )
+            animation.onfinish = (function(){resultingElement.show()})
+            if(cb) cb()
+            return this
+        })
+        resultingElement.fadeToggle = (function(duration=1000, cb){
+            isShown = resultingElement.style.display == "none"
+            if (isShown) this.show()
+            let animation = this.animate(
+                [
+                    {
+                        // from
+                        opacity: isShown ? 0 : 1,
+                    },
+                    {
+                        // to
+                        opacity: isShown ? 1 : 0,
+                    },
+                ], {duration: duration}
+            )
+            animation.onfinish = (function(){if(!isShown){resultingElement.toggle()}})
+            if(cb) cb()
+            return this
+        })
+
+        resultingElement.css = (function(css, value, cb) {
+            if(value) this.style[css] = value
+            if(!value) return this.style[css]
+            if(cb) cb()
+            return this
+        })
+
+        resultingElement.append = (function(value, cb) {
+            this.innerHTML += String(value)
+            if(cb) cb()
+            return this
+        })
+        resultingElement.prepend = (function(value, cb) {
+            this.innerHTML = String(value) + this.innerHTML
+            if(cb) cb()
+            return this
+        })
+        // resultingElement.after = (function(value, cb) {
+        //     const parser = new DOMParser();
+        //     const elem = parser.parseFromString(value, 'text/html');
+        //     if(this.parentNode) this.parentNode.insertBefore(elem, this.nextSibling)
+        //     if(cb) cb()
+        //     return this
+        // })
+        // resultingElement.before = (function(value, cb) {
+        //     const parser = new DOMParser();
+        //     const elem = parser.parseFromString(value, 'text/html');
+        //     if(this.parentNode) this.parentNode.insertBefore(elem, this)
+        //     if(cb) cb()
+        //     return this
+        // })
+
+        return resultingElement
+    }
+    /** 
+     * Add an event listener to a selector
+     * @param {String} selector
+     * @param {String} event
+     * @param {Function} cb
+     */
+    async function addEventListenerElem(selector, event, cb) {
+        let elem = await s.getElement(selector)
+        if (!elem) return console.log(elem)
+        elem?.addEventListener(event, cb)
+    }
+    async function onReady(cb) {
+        document.addEventListener("readystatechange", (e) => {
+            if (document.readyState == "complete") {
+                cb()
+            }
+        })
+    }
+    let s = {
+        getElement: waitForElm,
+        addEventListener: addEventListenerElem,
+        onReady: onReady,
+        $: ((query) => {
+            let elem = document.querySelector(query)
+            // If document.querySelector returns a falsey value, return the un-decorated element
+            if (!elem) return elem
+            elem = decorateElement(elem)
+            return elem
+        }),
+        get: (async function(url, cb) {
+            let resp = await fetch(url)
+            if(!resp.ok) {console.error(`Response code is not OK, response code is ${resp.status}`); return;}
+            let text = await resp.text()
+            if(cb) cb(text, resp.status)
+            return text
+        }),
+    }
+    const S = s.$
+</script>

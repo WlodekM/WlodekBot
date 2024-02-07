@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>MY AMAZING WEBSITE 🍕︎🍔︎😁︎</title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <link href="global.css" rel="stylesheet">
+    <include@www/libs.htms />
+</head>
+
+<body style="--sl-font-sans: var(--font)">
+    <section class="background">
+        <main class="main center">
+            <h1 id="no-margin">WlodekBot!!</h1>
+            <p>Welcome to WlodekBot's website!</p>
+            <p>this will be like a dashboard in the future but im too lazy to do that now</p>
+            <sl-tab-group
+                style="--track-width: 0px; --sl-color-primary-600: #000;--sl-spacing-medium: 0px;--sl-spacing-large: 7px">
+                <sl-tab slot="nav" panel="dashboard">Dashboard</sl-tab>
+                <sl-tab slot="nav" panel="info">Info</sl-tab>
+                <sl-tab slot="nav" panel="logs">Logs</sl-tab>
+                <sl-tab slot="nav" panel="shell" disabled>Shell</sl-tab>
+
+                <sl-tab-panel name="dashboard">
+                    <h2>Dashboard omg so cool</h2>
+                    <ul class="tree-view">
+                        <li>
+                            <b style="margin-bottom: 5px;font-size: large;">Shutdown</b>
+                            <br>
+                            <button hx-get="/api/htmx/shutdown" hx-target="#result-shutdown">
+                                Shutdown the bot (and the website)
+                            </button>
+                            <span id="result-shutdown"></span>
+                        </li>
+                        <li>
+                            <b style="margin-bottom: 5px;font-size: large;">Say stuff</b>
+                            <br>
+                            <form hx-get="/api/htmx/postHome" hx-target="#result-post">
+                                <input type="text" name="post" id="post">
+                                <input type="submit" value="Send!">
+                            </form>
+                            <span id="result-post"></span>
+                        </li>
+                    </ul>
+                </sl-tab-panel>
+                <sl-tab-panel name="info">
+                    <div id="content">
+                        <div id="content-grid-container">
+                            <div id="main" class="body">
+                                <h2 id="padding1" class="header">Info</h4>
+                                    <h4 id="paddinginlline1">Currntly online</h4>
+                                    <ul>
+                                        <li>
+                                            <ss>let userlist = JSON.parse(fs.readFileSync('ulist.txt'));userlist.join("</li>\n<li>")</ss>
+                                        </li>
+                                    </ul>
+                                    <h4 id="paddinginlline1">Leaderboard</h4>
+                                    <ul>
+                                        <li>
+                                            <ss>
+                                                var database_a = db.JSON()
+                                                var money_leaderboard = {}
+                                                for (const key in database_a) {
+                                                if (Object.hasOwnProperty.call(database_a, key)) {
+                                                const element = database_a[key];
+                                                if (key.includes("-money")) {
+                                                let keya = key.replaceAll("-money", "")
+                                                money_leaderboard[keya] = element
+                                                }
+                                                }
+                                                }
+                                                leaderboardArray(money_leaderboard).join("</li>\n<li>")
+                                            </ss>
+                                        </li>
+                                    </ul>
+                            </div>
+                            <div id="recent" class="body">
+                                <h2 id="padding1" class="header">Recent stuff</h2>
+                                <h4 id="paddinginlline1">Updates</h4>
+                                <h5 id="padding1">
+                                    <ss>update.version</ss>
+                                </h5>\
+                                <p id="paddingleft1">
+                                    <ss>update.changelog.replaceAll("\n", "<br>")</ss>
+                                </p>
+                            </div>
+                            <div id="side">
+                                <div id="links" class="body">
+                                    <h2 id="padding1" class="header">Links</h2>
+                                    <ul>
+                                        <li><a href="/logs#end">Logs</a></li>
+                                        <li><a href="/messages">Welcome messages.</a></li>
+                                        <li><a href="/userlist">Userlist</a></li>
+                                        <li><a href="/post">Chat</a></li>
+                                        <li><a href="/config">Config</a></li>
+                                    </ul>
+                                </div>
+                                <!-- <div id="links" class="body">
+                      <h4 id="padding1" class="header">Links</h4>
+                      <ul>
+                        <li><a href="1">Lorem, ipsum dolor.</a></li>
+                        <li><a href="2">Animi, est doloremque.</a></li>
+                        <li><a href="3">Veniam, similique itaque?</a></li>
+                        <li><a href="4">Iusto, voluptas dicta!</a></li>
+                        <li><a href="5">Quo, ipsam aspernatur?</a></li>
+                      </ul>
+                    </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </sl-tab-panel>
+                <sl-tab-panel name="logs">
+                    <ul class="tree-view" hx-get="/api/htmx/logs" hx-trigger="every 1s"></ul>
+                </sl-tab-panel>
+                <sl-tab-panel name="shell">WIP</sl-tab-panel>
+            </sl-tab-group>
+
+        </main>
+    </section>
+</body>
+
+</html>

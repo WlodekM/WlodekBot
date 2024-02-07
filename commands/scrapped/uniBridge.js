@@ -1,8 +1,7 @@
-import { bot } from "../index.js"
 let bridges = {};
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-export function bridgeCommand({user, message, origin, command, args}) {
+function bridgeCommand({user, message, origin, command, args, bot}) {
     let subCommand = args[0];
     let subArgs = args.splice(1);
     switch (subCommand) {

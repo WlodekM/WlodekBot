@@ -7,6 +7,11 @@
 
 body {
     margin: 0;
+    font-size: 100%;
+}
+
+ul {
+    font-size: 1em !important;
 }
 
 section.background {
@@ -26,6 +31,7 @@ main.main {
     width: calc(100% - 20vw);
     padding: 10px;
     min-height: calc(100% - 20px);
+    margin-top: 10px;
 }
 
 main.main.center {

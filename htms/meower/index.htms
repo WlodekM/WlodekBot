@@ -13,7 +13,7 @@
     $(document).ready(function(){
       $("#submit").click(function(){
         console.log("HI!");
-        var url = `https://wlbot.fakefurry.repl.co/api/send/home?post=${$("#post").val()}&user=${$("#user").val()}`;
+        var url = `/postHome?post=${$("#post").val()}&user=${$("#user").val()}`;
         fetch(url).then(response => {
             response.text().then(text => {
             console.log(text);
@@ -35,8 +35,8 @@
             <div style="padding-inline-start: 10px;" id="form">
               <label for="post">Post:</label><br>
               <input type="text" id="post" name="post" placeholder="Type something here"><br>
-              <label for="user">Username:</label><br>
-              <input type="text" id="user" name="user" placeholder="John Doe"><br><br>
+              <!-- <label for="user">Username:</label><br>
+              <input type="text" id="user" name="user" placeholder="John Doe"><br><br> -->
               <button id="submit">Submit</button>
             </div>
             <h6 id="paddinginlline1">What i do </h6>

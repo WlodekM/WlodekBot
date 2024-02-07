@@ -1,6 +1,11 @@
-import {bot, db, shop} from "../index.js"
+import JSONdb from "simple-json-db";
+const db = new JSONdb("../db.json");
+const shop = new JSONdb("../shop.json");
 
-export function buyCommand({user, message, origin, command, args}) {
+export default {
+  command: "buy",
+  aliases: [],    
+  func({user, message, origin, command, args, bot}) {
     db.sync()
     shop.sync()
     args = toTitleCase(args.join(" "))
@@ -26,4 +31,5 @@ export function buyCommand({user, message, origin, command, args}) {
     } else {
       bot.post(`Item "${(args)}" was not found`,origin)
     }
+  }
 }
