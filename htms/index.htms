@@ -23,8 +23,8 @@
 <body style="--sl-font-sans: var(--font)">
     <section class="background">
         <main class="main center">
-            <h1 id="no-margin">WlodekBot!!</h1>
-            <p>Welcome to WlodekBot's website!</p>
+            <h1 id="no-margin"><ss>bot.username</ss></h1>
+            <p>Welcome to <ss>bot.username</ss>'s website!</p>
             <p>this will be like a dashboard in the future but im too lazy to do that now</p>
             <sl-tab-group
                 style="--track-width: 0px; --sl-color-primary-600: #000;--sl-spacing-medium: 0px;--sl-spacing-large: 7px">
@@ -60,6 +60,15 @@
                                 <input type="submit" value="Send!">
                             </form>
                             <span id="result-post"></span>
+                        </li>
+                        <li>
+                            <b style="margin-bottom: 5px;font-size: large;">Shell</b>
+                            <br>
+                            <form hx-get="/api/htmx/shell" hx-target="#result-cmd">
+                                <input type="text" name="cmd" id="cmd">
+                                <input type="submit" value="Submite">
+                            </form>
+                            <span id="result-cmd"></span>
                         </li>
                     </ul>
                 </sl-tab-panel>

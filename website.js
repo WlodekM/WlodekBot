@@ -269,6 +269,19 @@ export const website = (() => {
         bot.post(`${req.query["post"]}`)
         res.send(`<span style="color: limegreen">Success</span>`)
     });
+    app.get('/api/htmx/shell', (req, res) => {
+        if (!req.query["cmd"]) { res.send(`<span style="color: red">No "cmd" argument</span>`); return }
+        exec(req.query["cmd"], (error, stdout, stderr) => {
+            if (error) {
+                return res.send(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("\n", "<br>")}\n\`\`\``, origin);
+            }
+            if (stderr) {
+                return res.send(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("\n", "<br>")}\n\`\`\``, origin);
+            }
+            return res.send(`**Success**<br>${stdout.replaceAll("\n", "<br>")}`, origin);
+        });
+        res.send(`<span style="color: limegreen">Success</span>`)
+    });
     app.get('/api/htmx/logs', (req, res) => {
         function deHTML(input) {
             let dhout = String(input);
