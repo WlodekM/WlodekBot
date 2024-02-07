@@ -3,6 +3,9 @@ import express from 'express'
 import { config, configAuth, db, update, bot } from './index.js'
 
 console.log("Initializing HTMS...")
+let s = {
+    api: {}
+}
 export function parseHtms(req, res, file=false, fileContent=null) {
     let template
     if (file) template = fs.readFileSync(String(file))

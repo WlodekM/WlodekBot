@@ -8,6 +8,18 @@
     <include@www/libs.htms />
 </head>
 
+<api path="git-update">
+    exec("git stash && git pull", (error, stdout, stderr) => {
+        if (error) {
+            return(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+        }
+        if (stderr) {
+            return(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+        }
+        return(`**Success**\n\`\`\`\n${stdout.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+    });
+</api>
+
 <body style="--sl-font-sans: var(--font)">
     <section class="background">
         <main class="main center">
@@ -31,6 +43,14 @@
                                 Shutdown the bot (and the website)
                             </button>
                             <span id="result-shutdown"></span>
+                        </li>
+                        <li>
+                            <b style="margin-bottom: 5px;font-size: large;">Update</b>
+                            <br>
+                            <button hx-get="<#git-update>" hx-target="#result-update">
+                                Update the bot (and the website)
+                            </button>
+                            <span id="result-update"></span>
                         </li>
                         <li>
                             <b style="margin-bottom: 5px;font-size: large;">Say stuff</b>
