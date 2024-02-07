@@ -1,6 +1,7 @@
 import fs from 'fs'
 import express from 'express'
 import { config, configAuth, db, update, bot } from './index.js'
+import { log } from "./libs/logs.js";
 
 console.log("Initializing HTMS...")
 let s = {
