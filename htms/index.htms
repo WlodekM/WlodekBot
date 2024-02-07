@@ -9,7 +9,7 @@
 </head>
 
 <api path="git-update">
-    exec("git stash && git pull", (error, stdout, stderr) => {
+    exec("git stash && git pull origin master", (error, stdout, stderr) => {
         if (error) {
             return(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("`", "\\\`")}\n\`\`\``, origin);
         }
