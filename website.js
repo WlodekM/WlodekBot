@@ -2,10 +2,19 @@ import fs from 'fs'
 import express from 'express'
 import { config, configAuth, db, update, bot } from './index.js'
 import { log } from "./libs/logs.js";
+import { exec } from "child_process";
 
 console.log("Initializing HTMS...")
-let s = {
-    api: {}
+const s = {
+    response: null,
+    request: null,
+    vars: {},
+    api: {
+        test: 'console.log("Hi")'
+    },
+    app: null,
+    fs:  fs,
+    // JSONdb: JSONdb,
 }
 export function parseHtms(req, res, file=false, fileContent=null) {
     let template
@@ -217,6 +226,7 @@ console.log("HTMS initialized!")
 export const website = (() => {
     console.log("OI!")
     const app = express()
+    s.app = app
     const port = 3000;
     app.set('trust proxy', true)
     app.use((req, res, next) => {
@@ -389,6 +399,13 @@ export const website = (() => {
     });
     app.get("*", (req, res) => {
         //code from the HTMS project (currently not public)
+        s.response = res;
+        s.request  = req;
+        let splitPath = req.path.split("/")
+        let splitURL = req.url.split(".")
+        if (s.api[splitPath[splitPath.length - 1]]) {
+            return res.send(String(eval(s.api[splitPath[splitPath.length - 1]])))
+        }
         let pp = publicPage(req.url, req.url.startsWith("/") ? "htms" : "htms/")
 
         switch (pp[1]) {
