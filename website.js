@@ -290,7 +290,6 @@ export const website = (() => {
             }
             return res.send(`**Success**<br>${stdout.replaceAll("\n", "<br>")}`, origin);
         });
-        res.send(`<span style="color: limegreen">Success</span>`)
     });
     app.get('/api/htmx/logs', (req, res) => {
         function deHTML(input) {
