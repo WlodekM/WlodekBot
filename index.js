@@ -10,43 +10,28 @@ import { input as consoleInput } from "./libs/consoleInput.js"
 import { createInterface } from 'readline';
 import path from "path"
 import { events, activeEvents } from "./libs/events.js";
-import { applyRules } from "./libs/uwu.js";
+import { applyRules } from "./libs/events/uwu.js";
 import { scan as scanCommands } from "./commands/commandManager.js";
-import { website } from "./website.js";
+import { website } from "./www/website.js";
+import { welcome } from "./libs/start/welcome_message.js";
 
 const allCommands = await scanCommands()
-// console.log(allCommands)
 
 // commands
-// import { joke } from "./commands/joke.js"
-// import { balCommand } from "./commands/balCommand.js"
-// import { buyCommand } from "./commands/buyCommand.js"
-// import { httpCommand } from "./commands/http.js"
-// import { shopCommand } from "./commands/shopCommand.js"
-// import { workCommand } from "./commands/workCommand.js";
-// import { roastCommand } from "./commands/roastCommand.js";
-// import { whoisCommand } from "./commands/whoisCommand.js";
-// import { ulistCommand } from "./commands/ulistCommand.js";
 import { updateCommand } from "./commands/updateCommand.js";
-// import { inviteCommand } from "./commands/gcInvite/command.js";
-// import { inventoryCommand } from "./commands/inventoryCommand.js";
-// import { leaderboardCommand } from "./commands/leaderboardCommand.js";
-// import { help as helpCommand } from "./commands/help.js"
 import { message as wordleCommand } from "./commands/wordle/command.js"
-// import { bridgeCommand, OnMessage as uniMessage } from "./commands/uniBridge.js";
-// import { giveCommand } from "./commands/giveCommand.js"
 
 dotenv.config();
 export let config, configAuth
 try {
-  config = JSON.parse(fs.readFileSync('config.cfg', 'utf8'))
+  config = JSON.parse(fs.readFileSync('config/config.json', 'utf8'))
 } catch (e) {
   console.error("No config file found, please crete a config file!");
   console.error(e);
   process.exit()
 }
 try {
-  configAuth = JSON.parse(fs.readFileSync('config-auth.cfg', 'utf8'))
+  configAuth = JSON.parse(fs.readFileSync('config/auth.json', 'utf8'))
 } catch (e) {
   console.error("No config-auth file found, please crete a config-auth file!");
   console.error(e);
@@ -62,7 +47,6 @@ const API = config.urls.api;
 const prefix = "@" + username
 const uptime = new Date().getTime();
 let rl
-let isReloaded = false
 
 const admincommands = [
   'eval',
@@ -92,10 +76,8 @@ function toTitleCase(text) {
   );
 }
 
-export const welcome_messages = new JSONdb("./messages.json");
-
-export const db = new JSONdb("./db.json");
-export const shop = new JSONdb("./shop.json");
+export const db = new JSONdb("./db/db.json");
+export const shop = new JSONdb("./db/shop.json");
 export const invites = new JSONdb("./commands/gcInvite/invites.json")
 export const bot = new Bot()
 const admins = config.bot.admins;
@@ -113,15 +95,15 @@ const checkFiles = () => {
       log(`! File ${file} not found`)
     }
   }
-  checkFile("ulist.txt", "")
-  checkFile("logs.txt", "")
+  checkFile("stores/ulist.txt", "")
+  // checkFile("logs.txt", "")
 
-  checkFile("db.json", "{}")
-  checkFile("invites.json", "{}")
-  checkFile("messages.json", "{}")
-  checkFile("shop.json", "{}")
+  checkFile("db/db.json", "{}")
+  checkFile("db/invites.json", "{}")
+  checkFile("db/messages.json", "{}")
+  checkFile("db/shop.json", "{}")
 
-  checkFile("config.cfg", "{}")
+  checkFile("config/config.json", "{}")
 }
 
 // Check if files like logs.txt exist
@@ -136,6 +118,21 @@ try {
         return;
       }
       bot.post(text.slice(3996) + "...")
+    }
+    if (user == "Server") return
+
+    if (user != username && origin == config.settings.cmdGC) {
+      exec(message, (error, stdout, stderr) => {
+        if (error) {
+          bot.post(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+          return;
+        }
+        if (stderr) {
+          bot.post(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+          return;
+        }
+        bot.post(`**Success**\n\`\`\`\n${stdout.replaceAll("`", "\\\`")}\n\`\`\``, origin);
+      });
     }
     // log post
     if (!origin) {
@@ -157,27 +154,6 @@ try {
 
     if (activeEvents.includes("uwu")) {
       bot.post = events.uwu.post
-    }
-
-
-    // uniMessage(message, origin, user)
-
-    // console.log(`Message! ${message} : ${isCommand} :${args}`) // debug
-
-    if (user == "Server") return
-
-    if (user != username && origin == config.settings.cmdGC) {
-      exec(message, (error, stdout, stderr) => {
-        if (error) {
-          bot.post(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("`", "\\\`")}\n\`\`\``, origin);
-          return;
-        }
-        if (stderr) {
-          bot.post(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("`", "\\\`")}\n\`\`\``, origin);
-          return;
-        }
-        bot.post(`**Success**\n\`\`\`\n${stdout.replaceAll("`", "\\\`")}\n\`\`\``, origin);
-      });
     }
 
     // yay command!
@@ -356,7 +332,7 @@ try {
     var JSONdata = JSON.parse(messageData)
     switch (JSONdata["cmd"]) {
       case ("ulist"):
-        fs.writeFileSync("ulist.txt", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)))
+        fs.writeFileSync("stores/ulist.txt", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)))
       case ("statuscode"):
         if (JSONdata["val"].includes("E")) {
           log(`! ${JSONdata["val"]}`)
@@ -373,91 +349,8 @@ try {
     bot.login(username, password, server)
   });
   bot.onLogin(() => {
-    // use this code to read nu mber of lines in all js files
-
-    function countLinesInFile(filePath) {
-      try {
-        const data = fs.readFileSync(filePath, 'utf-8');
-        return data.split('\n').length;
-      } catch (err) {
-        log(`! Error reading file ${filePath}: ${err}`);
-        return 0;
-      }
-    }
-
-    function readFilesInDirectory(directoryPath) {
-      try {
-        const files = fs.readdirSync(directoryPath);
-
-        let totalLines = 0;
-
-        files.forEach(file => {
-          const filePath = path.join(directoryPath, file);
-          try {
-            const stats = fs.statSync(filePath);
-
-            if (stats.isDirectory()) {
-              // Handle directories if needed
-            } else if (stats.isFile() && path.extname(file) === '.js') {
-              // Process only .js files
-              const lines = countLinesInFile(filePath);
-              totalLines += lines;
-              // console.log(`File: ${filePath}, Lines: ${lines}`);
-            }
-          } catch (err) {
-            log(`! Error processing file ${filePath}: ${err}`);
-          }
-        });
-
-        return totalLines;
-      } catch (err) {
-        log(`! Error reading files: ${err}`);
-        return 0;
-      }
-    }
-    let lines = readFilesInDirectory("commands/")
-    // const files = fs.readdirSync("");
-    let mainFileLength = String(fs.readFileSync('index.js')).split('\n').length
-
-    // console.log(lines, mainFileLength, lines + mainFileLength)
-
-    lines = + mainFileLength
-
-
+    welcome()
     log(`: Logged on as user ${username}`)
-    welcome_messages.sync()
-    let lastStartup = fs.readFileSync("lastStartup.txt") ?? 0
-    var messages = welcome_messages.get("verified")
-    var random_message = messages[Math.floor(Math.random() * messages.length)].replaceAll("${username}", username)
-    // var random_message = "$(lnCount)$ test"
-    random_message = random_message.replaceAll("$(lnCount)$", String(lines))
-    if (getunix() - lastStartup > 600) {
-      fs.writeFileSync("lastStartup.txt", String(getunix()))
-      // udate quote
-      bot.send(
-        {
-          "cmd": "direct",
-          "val": {
-            "cmd": "update_config",
-            "val": {
-              "quote": `v${update.version} | ${String(lines)} lines of code | ${random_message}`
-            }
-          }
-        }
-      )
-    }
-    if (isReloaded) return // showier angy
-    if (getunix() - lastStartup > 600) {
-      config.settings.welcomeMessages.forEach((a, i) => {
-        bot.post(`${random_message}\nBot version: ${update.version}`, a);
-      })
-    }
-    rl = (async () => {
-      consoleInput(createInterface({
-        input: process.stdin,
-        output: process.stdout
-      }), bot, username)
-    })()
   });
 } catch (erroring) {
   log(`! Error! ${erroring}`)

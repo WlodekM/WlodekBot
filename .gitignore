@@ -15,6 +15,5 @@ place.json
 logs.txt
 ulist.txt
 commands/gcInvite/invites.json
-db.json
-db.json
-*.json
+bridges.json
+invites.json

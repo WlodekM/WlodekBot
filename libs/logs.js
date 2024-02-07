@@ -92,11 +92,13 @@ function strftime(sFormat, date) {
     }[sMatch] || sMatch;
   });
 }
+
 export function log(text, next) {
   let logs
   if(!config.settings.log) return
   if(typeof(text) == "string" && text != "") {
-    var content = `${text} | ${strftime('%d.%m.%Y %H:%M', new Date())}`
-    fs.appendFileSync("logs.txt", `${content}\n`, { flag: "a+" });
+    var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
+    if(!fs.existsSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`)) fs.writeFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "")
+    fs.appendFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, `${content}\n`, { flag: "a+" });
   }
 }

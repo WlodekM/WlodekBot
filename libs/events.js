@@ -1,5 +1,5 @@
 import { bot } from "../index.js";
-import { applyRules } from "./uwu.js";
+import { applyRules } from "./events/uwu.js";
 
 export const events = {
     "uwu": {

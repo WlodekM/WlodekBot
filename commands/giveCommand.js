@@ -1,6 +1,6 @@
 import JSONdb from "simple-json-db";
-const db = new JSONdb("../db.json");
-const shop = new JSONdb("../shop.json");
+const db = new JSONdb("./db/db.json");
+const shop = new JSONdb("../db/shop.json");
 
 export default {
   command: "give",

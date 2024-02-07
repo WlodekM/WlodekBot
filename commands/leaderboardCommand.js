@@ -1,5 +1,5 @@
 import JSONdb from "simple-json-db";
-const db = new JSONdb("../db.json");
+const db = new JSONdb("./db/db.json");
 
 function leaderboardarray(userscores) {
   let result = Object.entries(userscores)

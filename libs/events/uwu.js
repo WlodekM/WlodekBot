@@ -1,4 +1,4 @@
-import Seed from "./seed.js";
+import Seed from "../seed.js";
 
 // Code from OwO-mod (https://github.com/WlodekM/Vencord/)
 const faces = [

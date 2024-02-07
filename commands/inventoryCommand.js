@@ -1,5 +1,5 @@
 import JSONdb from "simple-json-db";
-const db = new JSONdb("../db.json");
+const db = new JSONdb("./db/db.json");
 
 export default {
     command: "inventory",

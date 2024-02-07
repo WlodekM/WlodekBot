@@ -80,7 +80,7 @@
                                     <h4 id="paddinginlline1">Currntly online</h4>
                                     <ul>
                                         <li>
-                                            <ss>let userlist = JSON.parse(fs.readFileSync('ulist.txt'));userlist.join("</li>\n<li>")</ss>
+                                            <ss>let userlist = JSON.parse(fs.readFileSync('stores/ulist.txt'));userlist.join("</li>\n<li>")</ss>
                                         </li>
                                     </ul>
                                     <h4 id="paddinginlline1">Leaderboard</h4>

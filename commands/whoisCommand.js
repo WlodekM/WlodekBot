@@ -1,19 +1,19 @@
 import JSONdb from "simple-json-db";
 import fs from "fs";
-const db = new JSONdb("../db.json");
+const db = new JSONdb("./db/db.json");
 import http from "https"
 import { adminPermissions } from "../libs/bitField.js"
 
 let config, configAuth
 try {
-  config = JSON.parse(fs.readFileSync('config.cfg', 'utf8'))
+  config = JSON.parse(fs.readFileSync('config/config.json', 'utf8'))
 } catch (e) {
   console.error("No config file found, please crete a config file!");
   console.error(e);
   process.exit()
 }
 try {
-  configAuth = JSON.parse(fs.readFileSync('config-auth.cfg', 'utf8'))
+  configAuth = JSON.parse(fs.readFileSync('config/auth.json', 'utf8'))
 } catch (e) {
   console.error("No config-auth file found, please crete a config-auth file!");
   console.error(e);

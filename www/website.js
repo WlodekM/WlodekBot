@@ -1,7 +1,7 @@
 import fs from 'fs'
 import express from 'express'
-import { config, configAuth, db, update, bot } from './index.js'
-import { log } from "./libs/logs.js";
+import { config, configAuth, db, update, bot } from '../index.js'
+import { log } from "../libs/logs.js";
 import { exec } from "child_process";
 
 console.log("Initializing HTMS...")
@@ -405,7 +405,7 @@ export const website = (() => {
         if (s.api[splitPath[splitPath.length - 1]]) {
             return res.send(String(eval(s.api[splitPath[splitPath.length - 1]])))
         }
-        let pp = publicPage(req.url, req.url.startsWith("/") ? "htms" : "htms/")
+        let pp = publicPage(req.url, req.url.startsWith("/") ? "www/public" : "www/public/")
 
         switch (pp[1]) {
             case "plaintext":
