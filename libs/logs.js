@@ -1,5 +1,5 @@
 import fs from 'fs'
-import {config} from "../index.js"
+import {config} from "../bot.js"
 /* Port of strftime(). Compatibility notes:
  *
  * %c - formatted string is slightly different
@@ -100,5 +100,16 @@ export function log(text, next) {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
     if(!fs.existsSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`)) fs.writeFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "")
     fs.appendFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, `${content}\n`, { flag: "a+" });
+  }
+}
+
+export function logMessage(text, next) {
+  let logs
+  let path = `logs/message-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`
+  if(!config.settings.log) return
+  if(typeof(text) == "string" && text != "") {
+    var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
+    if(!fs.existsSync(path)) fs.writeFileSync(path, "")
+    fs.appendFileSync(path, `${content}\n`, { flag: "a+" });
   }
 }

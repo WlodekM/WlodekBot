@@ -1,5 +1,5 @@
 import JSONdb from "simple-json-db";
-import {bot, invites} from "../../index.js"
+import {bot, invites} from "../../bot.js"
 
 export function inviteCommand({user, message, origin, command, args}) {
     if(["home", "livechat"].includes(origin)) {

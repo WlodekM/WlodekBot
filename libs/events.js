@@ -1,4 +1,4 @@
-import { bot } from "../index.js";
+import { bot } from "../bot.js";
 import { applyRules } from "./events/uwu.js";
 
 export const events = {

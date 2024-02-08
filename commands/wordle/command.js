@@ -1,6 +1,6 @@
 // import chalk from "chalk";
 import fs from "fs";
-import { bot } from "../../index.js"
+import { bot } from "../../bot.js"
 const wordsJSON = fs.readFileSync("commands/wordle/words.json")
 
 const games = {}

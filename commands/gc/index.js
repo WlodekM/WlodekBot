@@ -1,5 +1,5 @@
 import JSONdb from "simple-json-db";
-import {bot, invites} from "../../index.js"
+import {bot, invites} from "../../bot.js"
 const gcDB = new JSONdb("gc.json")
 
 export function gcCommand({user, message, origin, command, args}) {

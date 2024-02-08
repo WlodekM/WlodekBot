@@ -1,5 +1,5 @@
 import fs from "fs"
-import { bot, config } from "../../index.js";
+import { bot, config } from "../../bot.js";
 import { log } from "../logs.js";
 
 export const welcome_messages = JSON.parse(fs.readFileSync("./db/messages.json"));
@@ -58,7 +58,7 @@ export function welcome() {
     }
     let lines = readFilesInDirectory("commands/")
     // const files = fs.readdirSync("");
-    let mainFileLength = String(fs.readFileSync('index.js')).split('\n').length
+    let mainFileLength = String(fs.readFileSync('bot.js')).split('\n').length
 
     // console.log(lines, mainFileLength, lines + mainFileLength)
 

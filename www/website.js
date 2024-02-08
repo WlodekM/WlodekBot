@@ -1,6 +1,6 @@
 import fs from 'fs'
 import express from 'express'
-import { config, configAuth, db, update, bot } from '../index.js'
+import { config, auth as configAuth, db, update, bot } from '../bot.js'
 import { log } from "../libs/logs.js";
 import { exec } from "child_process";
 

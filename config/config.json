@@ -1,8 +1,8 @@
 {
     "bot": {
         "update": {
-            "version": "1.1.1",
-            "changelog": "- **New UwU event, the bot noe only speaks in UwU**\n- Fixed the `joke` command\n- Added HTMS support to the dashboard(admin-only)\n- New `roast` command\n- New `give` command"
+            "version": "1.2.1",
+            "changelog": "Various technical updates"
         },
         "admins": ["WlodekM", "WlodekM2", "WlodekM3", "WlodekM4", "WlodekM5", "wlbot", "hell", "JoshAtticus"]
     },

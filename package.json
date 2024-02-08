@@ -1,5 +1,4 @@
 {
-	"start": "forever start index.js",
 	"type": "module",
 	"scripts": {
 		"run": "node ."

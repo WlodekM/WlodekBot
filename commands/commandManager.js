@@ -1,16 +1,15 @@
 import fs from "fs";
 console.log("commands")
 
-export async function scan() {
-    let commandsFolder = await fs.readdirSync("./commands")
+export async function scan(path="./commands", path2="") {
+    let commandsFolder = await fs.readdirSync(path)
     let commands = {}
-    // i fucking hate async because most of the time you're gonna just use await
     for (const file of commandsFolder) {
         let command
         if (file == "commandManager.js") continue;
         if (!file.endsWith(".js")) continue;
         try {
-            command = await import(`./${file}`);
+            command = await import(`./${path2}${file}`);
         } catch(e) {
             console.log(file, e)
             continue
