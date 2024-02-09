@@ -9,8 +9,8 @@ function getunix() {
     return (Math.floor(Date.now() / 1000))
 }
 
-export function reload() {
-    isReloaded = true
+export function setReloaded(a) {
+    isReloaded = a
 }
 
 export function welcome() {
@@ -62,7 +62,7 @@ export function welcome() {
 
     // console.log(lines, mainFileLength, lines + mainFileLength)
 
-    lines = + mainFileLength
+    lines += mainFileLength
 
     // welcome_messages.sync()
     let lastStartup = fs.readFileSync("stores/lastStartup.txt") ?? 0

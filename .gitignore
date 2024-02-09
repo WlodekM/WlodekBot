@@ -17,3 +17,4 @@ ulist.txt
 commands/gcInvite/invites.json
 bridges.json
 invites.json
+stores/lastStartup.txt

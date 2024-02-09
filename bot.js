@@ -37,7 +37,18 @@ export async function runBot() {
                 log(`! File ${file} not found`)
             }
         }
+        function checkFolder(folder) {
+            if (!fs.existsSync(folder)) {
+                fs.mkdirSync(folder, { recursive: true })
+                log(`! Folder ${folder} not found`)
+            }
+        }
+        checkFolder("stores")
+        checkFolder("config")
+        checkFolder("logs")
+        checkFolder("db")
         checkFile("stores/ulist.txt", "")
+        checkFile("stores/lastStartup.txt", "")
         // checkFile("logs.txt", "")
 
         checkFile("db/db.json", "{}")
