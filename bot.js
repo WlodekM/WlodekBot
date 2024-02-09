@@ -34,13 +34,13 @@ export async function runBot() {
         function checkFile(file, content) {
             if (!fs.existsSync(file)) {
                 fs.writeFileSync(file, content)
-                log(`! File ${file} not found`)
+                logs.log(`! File ${file} not found`)
             }
         }
         function checkFolder(folder) {
             if (!fs.existsSync(folder)) {
                 fs.mkdirSync(folder, { recursive: true })
-                log(`! Folder ${folder} not found`)
+                logs.log(`! Folder ${folder} not found`)
             }
         }
         checkFolder("stores")

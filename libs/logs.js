@@ -110,8 +110,8 @@ export function log(text, next) {
   if(!config.settings.log) return
   if(typeof(text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
-    checkFile(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`)
-    if(!fs.existsSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`)) fs.writeFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "")
+    checkFolder(`logs/event-logs`)
+    checkFile(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "\n")
     fs.appendFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, `${content}\n`, { flag: "a+" });
   }
 }
@@ -120,10 +120,10 @@ export function logMessage(text, next) {
   let logs
   let path = `logs/message-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`
   if(!config.settings.log) return
-  checkFile(path)
   if(typeof(text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
-    if(!fs.existsSync(path)) fs.writeFileSync(path, "")
+    checkFolder(`logs/message-logs`)
+    checkFile(path, "\n")
     fs.appendFileSync(path, `${content}\n`, { flag: "a+" });
   }
 }
