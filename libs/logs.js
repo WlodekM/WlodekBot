@@ -98,13 +98,19 @@ function checkFolder(folder) {
         log(`! Folder ${folder} not found`)
     }
 }
+function checkFile(file, content) {
+    if (!fs.existsSync(file)) {
+        fs.writeFileSync(file, content)
+        log(`! File ${file} not found`)
+    }
+}
 
 export function log(text, next) {
   let logs
   if(!config.settings.log) return
   if(typeof(text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
-    checkFolder(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`)
+    checkFile(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`)
     if(!fs.existsSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`)) fs.writeFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "")
     fs.appendFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, `${content}\n`, { flag: "a+" });
   }
@@ -114,7 +120,7 @@ export function logMessage(text, next) {
   let logs
   let path = `logs/message-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`
   if(!config.settings.log) return
-  checkFolder(path)
+  checkFile(path)
   if(typeof(text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
     if(!fs.existsSync(path)) fs.writeFileSync(path, "")
