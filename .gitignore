@@ -1,6 +1,7 @@
 # wlbot
+auth.json
 logs
-config-auth.cfg
+config
 .replit
 but.lockb
 replit*
@@ -18,3 +19,4 @@ commands/gcInvite/invites.json
 bridges.json
 invites.json
 stores/lastStartup.txt
+config/auth.json

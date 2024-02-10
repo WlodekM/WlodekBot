@@ -1,7 +1,8 @@
 import fs from 'fs'
 import express from 'express'
 import { config, auth as configAuth, db, update, bot } from '../bot.js'
-import { log } from "../libs/logs.js";
+import JSONdb from "simple-json-db";
+import { log, getLogPath, logMessage } from "../libs/logs.js";
 import { exec } from "child_process";
 
 console.log("Initializing HTMS...")
@@ -276,6 +277,7 @@ export const website = (() => {
     })
     app.get('/api/htmx/postHome', (req, res) => {
         if (req.query["post"] == null) { res.send(`<span style="color: red">No "post" argument</span>`); return }
+        logMessage(`${bot.username}: ${req.query["post"]}`)
         bot.post(`${req.query["post"]}`)
         res.send(`<span style="color: limegreen">Success</span>`)
     });
@@ -301,23 +303,24 @@ export const website = (() => {
             dhout = dhout.replaceAll("'", "&apos;");
             return dhout;
         }
-        let logs = deHTML(fs.readFileSync('logs.txt'));
+        let logs = deHTML(fs.readFileSync(getLogPath("message")));
+        // console.log(getLogPath("message"))
         logs = logs.split("\n").slice(-50);
 
         logs.forEach((a, i) => {
-            if (a.startsWith("! E:")) {
-                logs[i] = `<sl-badge variant="danger" pill>ERR</sl-badge> <span style="color: #e00">${a.replaceAll("\n", "<br>")}</span></div>`
-                return
-            }
-            if (a.startsWith(": ")) {
-                logs[i] = `<sl-badge variant="primary" pill>INFO</sl-badge> <span style="color: blue">${a.replaceAll("\n", "<br>")}</span></div>`
-                return
-            }
-            if (a.startsWith("! ")) {
-                logs[i] = ""
-                return
-            }
-            logs[i] = logs[i]?.replaceAll("\n", "<br>") + "<br>"
+            // if (a.startsWith("! E:")) {
+            //     logs[i] = `<sl-badge variant="danger" pill>ERR</sl-badge> <span style="color: #e00">${a.replaceAll("\n", "<br>")}</span></div>`
+            //     return
+            // }
+            // if (a.startsWith(": ")) {
+            //     logs[i] = `<sl-badge variant="primary" pill>INFO</sl-badge> <span style="color: blue">${a.replaceAll("\n", "<br>")}</span></div>`
+            //     return
+            // }
+            // if (a.startsWith("! ")) {
+            //     logs[i] = ""
+            //     return
+            // }
+            logs[i] = logs[i] + "<br>"
         })
 
         res.send(logs.join("\n"))

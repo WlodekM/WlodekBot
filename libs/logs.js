@@ -1,5 +1,9 @@
 import fs from 'fs'
-import {config} from "../bot.js"
+import path from "path"
+import { config } from "../bot.js"
+import capcon from "capture-console"
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 /* Port of strftime(). Compatibility notes:
  *
  * %c - formatted string is slightly different
@@ -38,50 +42,50 @@ function strftime(sFormat, date) {
     aDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     aMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     aDayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
-    isLeapYear = function() {
-      return (nYear%4===0 && nYear%100!==0) || nYear%400===0;
+    isLeapYear = function () {
+      return (nYear % 4 === 0 && nYear % 100 !== 0) || nYear % 400 === 0;
     },
-    getThursday = function() {
+    getThursday = function () {
       var target = new Date(date);
-      target.setDate(nDate - ((nDay+6)%7) + 3);
+      target.setDate(nDate - ((nDay + 6) % 7) + 3);
       return target;
     },
-    zeroPad = function(nNum, nPad) {
+    zeroPad = function (nNum, nPad) {
       return ('' + (Math.pow(10, nPad) + nNum)).slice(1);
     };
-  return sFormat.replace(/%[a-z]/gi, function(sMatch) {
+  return sFormat.replace(/%[a-z]/gi, function (sMatch) {
     return {
-      '%a': aDays[nDay].slice(0,3),
+      '%a': aDays[nDay].slice(0, 3),
       '%A': aDays[nDay],
-      '%b': aMonths[nMonth].slice(0,3),
+      '%b': aMonths[nMonth].slice(0, 3),
       '%B': aMonths[nMonth],
       '%c': date.toUTCString(),
-      '%C': Math.floor(nYear/100),
+      '%C': Math.floor(nYear / 100),
       '%d': zeroPad(nDate, 2),
       '%e': nDate,
-      '%F': date.toISOString().slice(0,10),
+      '%F': date.toISOString().slice(0, 10),
       '%G': getThursday().getFullYear(),
       '%g': ('' + getThursday().getFullYear()).slice(2),
       '%H': zeroPad(nHour, 2),
-      '%I': zeroPad((nHour+11)%12 + 1, 2),
-      '%j': zeroPad(aDayCount[nMonth] + nDate + ((nMonth>1 && isLeapYear()) ? 1 : 0), 3),
+      '%I': zeroPad((nHour + 11) % 12 + 1, 2),
+      '%j': zeroPad(aDayCount[nMonth] + nDate + ((nMonth > 1 && isLeapYear()) ? 1 : 0), 3),
       '%k': '' + nHour,
-      '%l': (nHour+11)%12 + 1,
+      '%l': (nHour + 11) % 12 + 1,
       '%m': zeroPad(nMonth + 1, 2),
       '%M': zeroPad(date.getMinutes(), 2),
-      '%p': (nHour<12) ? 'AM' : 'PM',
-      '%P': (nHour<12) ? 'am' : 'pm',
-      '%s': Math.round(date.getTime()/1000),
+      '%p': (nHour < 12) ? 'AM' : 'PM',
+      '%P': (nHour < 12) ? 'am' : 'pm',
+      '%s': Math.round(date.getTime() / 1000),
       '%S': zeroPad(date.getSeconds(), 2),
       '%u': nDay || 7,
-      '%V': (function() {
-              var target = getThursday(),
-                n1stThu = target.valueOf();
-              target.setMonth(0, 1);
-              var nJan1 = target.getDay();
-              if (nJan1!==4) target.setMonth(0, 1 + ((4-nJan1)+7)%7);
-              return zeroPad(1 + Math.ceil((n1stThu-target)/604800000), 2);
-            })(),
+      '%V': (function () {
+        var target = getThursday(),
+          n1stThu = target.valueOf();
+        target.setMonth(0, 1);
+        var nJan1 = target.getDay();
+        if (nJan1 !== 4) target.setMonth(0, 1 + ((4 - nJan1) + 7) % 7);
+        return zeroPad(1 + Math.ceil((n1stThu - target) / 604800000), 2);
+      })(),
       '%w': '' + nDay,
       '%x': date.toLocaleDateString(),
       '%X': date.toLocaleTimeString(),
@@ -93,22 +97,25 @@ function strftime(sFormat, date) {
   });
 }
 function checkFolder(folder) {
-    if (!fs.existsSync(folder)) {
-        fs.mkdirSync(folder, { recursive: true })
-        log(`! Folder ${folder} not found`)
-    }
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder, { recursive: true })
+    // log(`! Folder ${folder} not found`)
+  }
 }
 function checkFile(file, content) {
-    if (!fs.existsSync(file)) {
-        fs.writeFileSync(file, content)
-        log(`! File ${file} not found`)
-    }
+  if (!fs.existsSync(file)) {
+    fs.writeFileSync(file, content)
+    // log(`! File ${file} not found`)
+  }
 }
+
+checkFolder(`logs/console-logs`)
+checkFile(`logs/console-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "\n")
 
 export function log(text, next) {
   let logs
-  if(!config.settings.log) return
-  if(typeof(text) == "string" && text != "") {
+  if (!config.settings.log) return
+  if (typeof (text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
     checkFolder(`logs/event-logs`)
     checkFile(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "\n")
@@ -119,11 +126,34 @@ export function log(text, next) {
 export function logMessage(text, next) {
   let logs
   let path = `logs/message-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`
-  if(!config.settings.log) return
-  if(typeof(text) == "string" && text != "") {
+  if (!config.settings.log) return
+  if (typeof (text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
     checkFolder(`logs/message-logs`)
     checkFile(path, "\n")
     fs.appendFileSync(path, `${content}\n`, { flag: "a+" });
   }
 }
+
+export function advLog(text, type, prefix) {
+  let logs
+  let path = `logs/${type}-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`
+  if (!config.settings.log) return
+  if (typeof (text) == "string" && text != "") {
+    var content = `${prefix}${prefix ? " " : ""}[${strftime('%H:%M', new Date())}] ${text}`
+    checkFolder(`logs/${type}-logs`)
+    checkFile(path, "\n")
+    fs.appendFileSync(path, `${content}\n`, { flag: "a+" });
+  }
+}
+
+export function getLogPath(type) {
+  return `logs/${type}-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`
+}
+
+capcon.startCapture(process.stdout, (stdout, encoding, fd) => {
+    advLog(`${stdout.replace(/\n$/, '')}`, "console", "•")
+});
+capcon.startCapture(process.stderr, (stdout, encoding, fd) => {
+    advLog(`${stdout.replace(/\n$/, '')}`, "console", "!")
+});

@@ -1,6 +1,7 @@
 import fs from "fs"
 import { bot, config } from "../../bot.js";
 import { log } from "../logs.js";
+import path from "path"
 
 export const welcome_messages = JSON.parse(fs.readFileSync("./db/messages.json"));
 let isReloaded = false

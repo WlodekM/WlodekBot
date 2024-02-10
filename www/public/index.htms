@@ -25,6 +25,7 @@
         <main class="main center">
             <h1 id="no-margin"><ss>bot.username</ss></h1>
             <p>Welcome to <ss>bot.username</ss>'s website!</p>
+            <ss>1+2</ss>
             <p>this will be like a dashboard in the future but im too lazy to do that now</p>
             <sl-tab-group
                 style="--track-width: 0px; --sl-color-primary-600: #000;--sl-spacing-medium: 0px;--sl-spacing-large: 7px">
@@ -87,18 +88,19 @@
                                     <ul>
                                         <li>
                                             <ss>
-                                                var database_a = db.JSON()
-                                                var money_leaderboard = {}
-                                                for (const key in database_a) {
-                                                if (Object.hasOwnProperty.call(database_a, key)) {
-                                                const element = database_a[key];
-                                                if (key.includes("-money")) {
-                                                let keya = key.replaceAll("-money", "")
-                                                money_leaderboard[keya] = element
-                                                }
-                                                }
-                                                }
-                                                leaderboardArray(money_leaderboard).join("</li>\n<li>")
+let db = new JSONdb("./db/db.json");
+var database_a = db.JSON()
+var money_leaderboard = {}
+for (const key in database_a) {
+if (Object.hasOwnProperty.call(database_a, key)) {
+    const element = database_a[key];
+        if (key.includes("-money")) {
+        let keya = key.replaceAll("-money", "")
+        money_leaderboard[keya] = element
+        }
+    }
+}
+leaderboardArray(money_leaderboard).join("</li>\n<li>")
                                             </ss>
                                         </li>
                                     </ul>
@@ -139,7 +141,13 @@
                     </div>
                 </sl-tab-panel>
                 <sl-tab-panel name="logs">
-                    <ul class="tree-view" hx-get="/api/htmx/logs" hx-trigger="every 1s"></ul>
+                    <ul class="tree-view" hx-get="/api/htmx/logs" hx-trigger="every 0.5s"></ul>
+                    <br>
+                    <form hx-get="/api/htmx/postHome" hx-target="#result-post">
+                        <input type="text" name="post" id="post">
+                        <input type="submit" value="Send!">
+                    </form>
+                    <span id="result-post"></span>
                 </sl-tab-panel>
                 <sl-tab-panel name="shell">WIP</sl-tab-panel>
             </sl-tab-group>

@@ -1,6 +1,7 @@
 import Bot from "meowerbot";
-import { exec } from "child_process";
-import * as dotenv from "dotenv";
+// import { exec } from "child_process";
+import { delay } from "./libs/delay.js"
+// import * as dotenv from "dotenv";
 import JSONdb from "simple-json-db";
 import * as logs from "./libs/logs.js";
 import fs from 'fs'
@@ -11,6 +12,37 @@ import * as welcome from "./libs/start/welcome_message.js";
 function getunix() {
     return (Math.floor(Date.now() / 1000))
 }
+function checkFiles() {
+    function checkFile(file, content) {
+        if (!fs.existsSync(file)) {
+            fs.writeFileSync(file, content)
+            logs.log(`! File ${file} not found`)
+        }
+    }
+    function checkFolder(folder) {
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder, { recursive: true })
+            logs.log(`! Folder ${folder} not found`)
+        }
+    }
+    checkFolder("stores")
+    checkFolder("config")
+    checkFolder("logs")
+    checkFolder("db")
+    checkFile("stores/ulist.txt", "")
+    checkFile("stores/lastStartup.txt", "")
+    // checkFile("logs.txt", "")
+
+    checkFile("db/db.json", "{}")
+    checkFile("db/invites.json", "{}")
+    checkFile("db/messages.json", "{}")
+    checkFile("db/shop.json", "{}")
+
+    checkFile("config/config.json", "{}")
+}
+
+// Check if files like logs.txt exist
+checkFiles()
 
 export let username
 export let password
@@ -21,8 +53,8 @@ export let db
 export let shop
 export let invites
 export const bot = new Bot()
-export let config
-export let auth
+export const config = JSON.parse(fs.readFileSync("config/config.json"))
+export const auth = JSON.parse(fs.readFileSync("config/auth.json"))
 export let update
 
 export async function runBot() {
@@ -30,43 +62,8 @@ export async function runBot() {
     const commands = await scanCommands()
     const adminCommands = await scanCommands("./commands/admin", "admin/")
 
-    function checkFiles() {
-        function checkFile(file, content) {
-            if (!fs.existsSync(file)) {
-                fs.writeFileSync(file, content)
-                logs.log(`! File ${file} not found`)
-            }
-        }
-        function checkFolder(folder) {
-            if (!fs.existsSync(folder)) {
-                fs.mkdirSync(folder, { recursive: true })
-                logs.log(`! Folder ${folder} not found`)
-            }
-        }
-        checkFolder("stores")
-        checkFolder("config")
-        checkFolder("logs")
-        checkFolder("db")
-        checkFile("stores/ulist.txt", "")
-        checkFile("stores/lastStartup.txt", "")
-        // checkFile("logs.txt", "")
-
-        checkFile("db/db.json", "{}")
-        checkFile("db/invites.json", "{}")
-        checkFile("db/messages.json", "{}")
-        checkFile("db/shop.json", "{}")
-
-        checkFile("config/config.json", "{}")
-    }
-
-    // Check if files like logs.txt exist
-    checkFiles()
-
-    config = JSON.parse(fs.readFileSync("config/config.json"))
-    auth = JSON.parse(fs.readFileSync("config/auth.json"))
-
     let username = auth.bot.username
-    let password = auth.bot.username
+    let password = auth.bot.password
     let admins = config.bot.admins;
     let server = config.urls.server
     let uptime = new Date().getTime();

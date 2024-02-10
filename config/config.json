@@ -15,7 +15,7 @@
             "currency": "⏣",
             "workCooldown": "120"
         },
-        "consoleInput": "true",
+        "consoleInput": "false",
         "log":"true",
         "logCL":"false",
         "browser":"",
