@@ -1,5 +1,6 @@
 import fs from 'fs'
 import express from 'express'
+import path from "path"
 import { config, auth as configAuth, db, update, bot } from '../bot.js'
 import JSONdb from "simple-json-db";
 import { log, getLogPath, logMessage } from "../libs/logs.js";
@@ -14,10 +15,10 @@ const s = {
         test: 'console.log("Hi")'
     },
     app: null,
-    fs:  fs,
+    fs: fs,
     // JSONdb: JSONdb,
 }
-export function parseHtms(req, res, file=false, fileContent=null) {
+export function parseHtms(req, res, file = false, fileContent = null) {
     let template
     if (file) template = fs.readFileSync(String(file))
     const dictionary = {
@@ -40,6 +41,7 @@ export function parseHtms(req, res, file=false, fileContent=null) {
     const regex = {
         include: /<include@([^>\s]+(?:\s[^>]+)*)\s*\/>/g,
         ss: /<ss>([\s\S]*?)<\/ss>/g,
+        ss2: /<script type="module" context="ss">([\s\S]*?)<\/script>/g,
         api: /<api path="(.*?)">([\s\S]*?)<\/api>/g,
         apiHelper: /<\#([\s\S]*?)>/g
     }
@@ -66,6 +68,19 @@ export function parseHtms(req, res, file=false, fileContent=null) {
     // console.log(content)
 
     content = content.replace(regex.ss, (match, group) => {
+        try {
+            // Evaluate the code inside <!--$...$--> tags
+            const result = eval(group);
+            const sanitizedResult = result !== undefined ? String(result) : '';
+            return sanitizedResult;
+        } catch (error) {
+            // If there's an error during evaluation, return the original match
+            console.error(`Error evaluating code: ${group}\nError: `, error);
+            return match;
+        }
+    });
+
+    content = content.replace(regex.ss2, (match, group) => {
         try {
             // Evaluate the code inside <!--$...$--> tags
             const result = eval(group);
@@ -134,7 +149,7 @@ function publicPage(RequestURL, FilePath) {
     // console.log(filePath)
     let isDir = !(filePath.indexOf('.') > -1)
     if (isDir) filePath += filePath.endsWith("/") ? "index.html" : "/index.html"
-    // console.log(filePath, isDir)
+    console.log(filePath, isDir)
     if (!fs.existsSync(filePath)) {
         if (fs.existsSync(filePath.replaceAll(".html", ".htms"))) {
             return [filePath.replaceAll(".html", ".htms"), "htms"]
@@ -282,7 +297,7 @@ export const website = (() => {
         res.send(`<span style="color: limegreen">Success</span>`)
     });
     app.get('/api/htmx/shell', (req, res) => {
-        if (!req.query["cmd"]) { return res.send(`<span style="color: red">No "cmd" argument</span>`);  }
+        if (!req.query["cmd"]) { return res.send(`<span style="color: red">No "cmd" argument</span>`); }
         exec(req.query["cmd"], (error, stdout, stderr) => {
             if (error) {
                 return res.send(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("\n", "<br>")}\n\`\`\``);
@@ -372,6 +387,23 @@ export const website = (() => {
             res.send(respond)
         });
     });
+    // Define a route to handle browsing the file system
+    app.get('/browse', (req, res) => {
+        const basePath = req.query.path || './'; // Get the path from query parameter, default to current directory
+        const files = fs.readdirSync(basePath)
+            .map(file => {
+                const fullPath = path.join(basePath, file);
+                const stats = fs.statSync(fullPath);
+                return {
+                    name: file,
+                    isDirectory: stats.isDirectory(),
+                    fullPath: fullPath,
+                    stats: stats
+                };
+            });
+
+        res.json(files);
+    });
     app.get('/config', function (req, res) {
         function deHTML(input) {
             let dhout = input;
@@ -402,13 +434,13 @@ export const website = (() => {
     app.get("*", (req, res) => {
         //code from the HTMS project (currently not public)
         s.response = res;
-        s.request  = req;
-        let splitPath = req.path.split("/")
+        s.request = req;
+        let splitPath = new URL(`https://${req.headers.host}${req.path}`).pathname.split("/")
         let splitURL = req.url.split(".")
         if (s.api[splitPath[splitPath.length - 1]]) {
             return res.send(String(eval(s.api[splitPath[splitPath.length - 1]])))
         }
-        let pp = publicPage(req.url, req.url.startsWith("/") ? "www/public" : "www/public/")
+        let pp = publicPage(req.path, req.url.startsWith("/") ? "www/public" : "www/public/")
 
         switch (pp[1]) {
             case "plaintext":

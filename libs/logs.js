@@ -117,6 +117,7 @@ export function log(text, next) {
   if (!config.settings.log) return
   if (typeof (text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
+    console.log(content)
     checkFolder(`logs/event-logs`)
     checkFile(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "\n")
     fs.appendFileSync(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, `${content}\n`, { flag: "a+" });
@@ -129,6 +130,7 @@ export function logMessage(text, next) {
   if (!config.settings.log) return
   if (typeof (text) == "string" && text != "") {
     var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
+    console.log(content)
     checkFolder(`logs/message-logs`)
     checkFile(path, "\n")
     fs.appendFileSync(path, `${content}\n`, { flag: "a+" });
@@ -141,6 +143,7 @@ export function advLog(text, type, prefix) {
   if (!config.settings.log) return
   if (typeof (text) == "string" && text != "") {
     var content = `${prefix}${prefix ? " " : ""}[${strftime('%H:%M', new Date())}] ${text}`
+    // console.log(content)
     checkFolder(`logs/${type}-logs`)
     checkFile(path, "\n")
     fs.appendFileSync(path, `${content}\n`, { flag: "a+" });
