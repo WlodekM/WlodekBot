@@ -78,7 +78,7 @@
             <a href='?path=${a.fullPath}'>${a.isDirectory ? "<img src=\"https://www.apache.org/icons/folder.png\">" : "<img src=\"https://www.apache.org/icons/generic.png\">"}</a>\
         </td>\
         <td>\
-            <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : "download"}>${a.name}</a>
+            <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : `download="${path.basename(a.fullPath)}"`}>${a.name}</a>
         </td>\
         <td>\
             ${a.stats.ctime}
