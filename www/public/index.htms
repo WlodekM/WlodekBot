@@ -32,7 +32,7 @@
                 <sl-tab slot="nav" panel="dashboard">Dashboard</sl-tab>
                 <sl-tab slot="nav" panel="info">Info</sl-tab>
                 <sl-tab slot="nav" panel="logs">Logs</sl-tab>
-                <sl-tab slot="nav" panel="shell" disabled>Shell</sl-tab>
+                <sl-tab slot="nav" panel="files">Files</sl-tab>
 
                 <sl-tab-panel name="dashboard">
                     <h2>Dashboard omg so cool</h2>
@@ -149,7 +149,7 @@ leaderboardArray(money_leaderboard).join("</li>\n<li>")
                     </form>
                     <span id="result-post"></span>
                 </sl-tab-panel>
-                <sl-tab-panel name="shell">WIP</sl-tab-panel>
+                <sl-tab-panel name="files"><iframe src="/files" frameborder="0"></iframe></sl-tab-panel>
             </sl-tab-group>
 
         </main>
