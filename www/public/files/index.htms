@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse</title>
+    <include@www/libs.htms />
+</head>
+
+<body>
+    <script type="module" context="ss">
+        let uuh = fs.statSync(req.query.path || './')
+        if (!uuh.isDirectory()) {
+            console.log("yeah");
+            `<a href="/browse/${req.query.path || './'}" download>download</a>\n<hr>`
+        }
+    </script>
+    <table>
+        <tr>
+            <th></th>
+            <th>File</th>
+            <th>Last changed</th>
+        </tr>
+        <tr>
+            <td>
+                <a href="?path=./">
+                    <img src="https://www.apache.org/icons/comp.gray.png">
+                </a>
+            </td>
+            <td>
+                <a href="?path=./">
+                    Home directory (./)
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a href="?path=<ss>path.normalize(req.query.path + '/..');</ss>">
+                    <img src="https://www.apache.org/icons/back.png">
+                </a>
+            </td>
+            <td>
+                <a href="?path=<ss>path.normalize(req.query.path + '/..');</ss>">
+                    Parent directory (<ss>path.normalize(req.query.path + '/..');</ss>)
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <hr>
+            </td>
+            <td>
+                <hr>
+            </td>
+            <td>
+                <hr>
+            </td>
+        </tr>
+        <script type="module" context="ss">
+            let uuh2 = fs.statSync(req.query.path || './')
+            if (uuh2.isDirectory()) {
+                const basePath = req.query.path || './'; // Get the path from query parameter, default to current directory
+                const files = fs.readdirSync(basePath)
+                    .map(file => {
+                        const fullPath = path.join(basePath, file);
+                        const stats = fs.statSync(fullPath);
+                        return {
+                            name: file,
+                            isDirectory: stats.isDirectory(),
+                            fullPath: fullPath,
+                            stats: stats
+                        };
+                    });
+                files.map((a, i) => {return `\
+    <tr>\
+        <td>\
+            <a href='?path=${a.fullPath}'>${a.isDirectory ? "<img src=\"https://www.apache.org/icons/folder.png\">" : "<img src=\"https://www.apache.org/icons/generic.png\">"}</a>\
+        </td>\
+        <td>\
+            <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : "download"}>${a.name}</a>
+        </td>\
+        <td>\
+            ${a.stats.ctime}
+        </td>\
+    </tr>`}).join("\n")
+            } else { "" }
+        </script>
+    </table>
+</body>
+
+</html>

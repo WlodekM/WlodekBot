@@ -389,7 +389,11 @@ export const website = (() => {
     });
     // Define a route to handle browsing the file system
     app.get('/browse', (req, res) => {
-        const basePath = req.query.path || './'; // Get the path from query parameter, default to current directory
+        let splitPath = req.query.path
+        const basePath = splitPath || './'; // Get the path from query parameter, default to current directory
+        if(!fs.existsSync(basePath)) return res.send("404")
+        if(fs.statSync(basePath).isDirectory() && !fs.existsSync(basePath)) res.send("file not found")
+        if(!fs.statSync(basePath).isDirectory()) return res.send(fs.readFileSync(basePath))
         const files = fs.readdirSync(basePath)
             .map(file => {
                 const fullPath = path.join(basePath, file);
