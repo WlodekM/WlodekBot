@@ -3,6 +3,7 @@ import express from 'express'
 import path from "path"
 import { config, auth as configAuth, db, update, bot } from '../bot.js'
 import JSONdb from "simple-json-db";
+import os from "os"
 import { log, getLogPath, logMessage } from "../libs/logs.js";
 import { exec } from "child_process";
 import strftime from '../libs/strftime.js'
@@ -312,6 +313,7 @@ export const website = (() => {
     });
     app.get('/api/htmx/shell', (req, res) => {
         if (!req.query["cmd"]) { return res.send(`<span style="color: red">No "cmd" argument</span>`); }
+        console.log(req.query.cmd)
         exec(req.query["cmd"], (error, stdout, stderr) => {
             if (error) {
                 return res.send(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("\n", "<br>")}\n\`\`\``);

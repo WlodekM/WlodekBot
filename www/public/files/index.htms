@@ -63,6 +63,7 @@
             <th></th>
             <th>File</th>
             <th>Last changed</th>
+            <th>Actions</th>
         </tr>
         <tr>
             <td>
@@ -125,6 +126,9 @@
         <td>\
             ${strftime('%H:%M %d.%m.%Y', a.stats.ctime)}
         </td>\
+        <td>\
+            <img src="https://www.apache.org/icons/broken.png" hx-get="<#delFile>?path=${a.isDirectory ? "-rf " : ""}${a.fullPath}" hx-trigger="click" hx-target="hx-out">\
+        </td>\
     </tr>`}).join("\n")
             } else { "" }
         </script>
@@ -145,6 +149,14 @@
             fs.writeFileSync(req.query.path, req.query.content)
         })()
     </script>
+    <script path="delFile" context="api">
+        (async ()=> {
+            if(!req.query.path) return res.status(400).send("400")
+            fs.unlinkSync(req.query.path)
+        })()
+    </script>
 </body>
+
+<hx-out style="display: none;"></hx-out>
 
 </html>
