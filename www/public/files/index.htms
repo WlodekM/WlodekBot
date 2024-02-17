@@ -6,9 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse</title>
     <include@www/libs.htms />
+    <api path="chkFile">
+        res.send(fs.existsSync(req.query.file))
+    </api>
+    <script>
+        s.getElement("#mkFileForm").then((el)=>{
+            el.addEventListener("submit",
+                /**
+                 * @param {Event} e
+                 */
+                function (e) {
+                    e.preventDefault()
+                    S("#err").text("")
+                    
+                    if(!S("#file")?.val()) return S("#err").text("Please enter file name")
+                    
+                    if(!S("#content")?.val()) return S("#err").text("Please enter file content")
+
+                    let file = S("#file")?.val()
+                    let content = S("#content")?.val()
+
+                    console.log(file, content)
+
+                    // s.get("<#chkFile>?file=" + "<ss>req.query.path || './'</ss>" + file, (text, status) => {
+                    //     if(!JSON.parse(text)) console.log("UIENAINU")
+                    // })
+
+                    let obj = {
+                        path: `<ss>req.query.path || './'</ss>/${file}`,
+                        content: content
+                    }
+
+                    let q = new URLSearchParams(obj)
+
+                    s.get(`<#mkFile>?${q.toString()}`, ()=>{document.location.reload()})
+                }
+            )
+        })
+    </script>
 </head>
 
 <body>
+    <#chkFile>
     <script type="module" context="ss">
         let uuh = fs.statSync(req.query.path || './')
         if (!uuh.isDirectory()) {
@@ -16,6 +55,9 @@
             `<a href="/browse/${req.query.path || './'}" download>download</a>\n<hr>`
         }
     </script>
+    <ss>
+        console.log("hi")
+    </ss>
     <table>
         <tr>
             <th></th>
@@ -81,12 +123,28 @@
             <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : `download="${path.basename(a.fullPath)}"`}>${a.name}</a>
         </td>\
         <td>\
-            ${a.stats.ctime}
+            ${strftime('%H:%M %d.%m.%Y', a.stats.ctime)}
         </td>\
     </tr>`}).join("\n")
             } else { "" }
         </script>
     </table>
+    <hr>
+    <form id="mkFileForm">
+        <input type="text" name="file" id="file" placeholder="File path...">
+        <br>
+        <textarea id="content" placeholder="File content here..."></textarea>
+        <br>
+        <input type="submit" value="Submitt">
+    </form>
+    <span id="err" style="color: red;"></span>
+    <script path="mkFile" context="api">
+        (async ()=> {
+            if(!req.query.path) return res.status(400).send("400")
+            if(!req.query.content) return res.status(400).send("400")
+            fs.writeFileSync(req.query.path, req.query.content)
+        })()
+    </script>
 </body>
 
 </html>

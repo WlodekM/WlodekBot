@@ -5,6 +5,7 @@ import { config, auth as configAuth, db, update, bot } from '../bot.js'
 import JSONdb from "simple-json-db";
 import { log, getLogPath, logMessage } from "../libs/logs.js";
 import { exec } from "child_process";
+import strftime from '../libs/strftime.js'
 
 console.log("Initializing HTMS...")
 const s = {
@@ -36,13 +37,14 @@ export function parseHtms(req, res, file = false, fileContent = null) {
 
     let lib = fs.readFileSync("www/standardLib.htms")
 
-    content = content.replaceAll("<include@sLib />", lib)
+    content = content.replaceAll("<include@sLib />", `<script>\n${strftime.toString()}\n</script>\n\n${lib}`)
 
     const regex = {
         include: /<include@([^>\s]+(?:\s[^>]+)*)\s*\/>/g,
         ss: /<ss>([\s\S]*?)<\/ss>/g,
         ss2: /<script type="module" context="ss">([\s\S]*?)<\/script>/g,
         api: /<api path="(.*?)">([\s\S]*?)<\/api>/g,
+        api2: /<script path="(.*?)" context="api">([\s\S]*?)<\/script>/g,
         apiHelper: /<\#([\s\S]*?)>/g
     }
 
@@ -98,6 +100,18 @@ export function parseHtms(req, res, file = false, fileContent = null) {
 
     // Logging the extracted values
     for (const match of matches) {
+        const APIpath = match[1];
+        const code = match[2];
+        console.log(APIpath)
+        s.api[`${req.path.replace("/", "")}-${APIpath}`] = code
+        content = content.replace(match[0], `<!-- API endpoint definition here (${req.path.replace("/", "")}-${APIpath}) -->\n<!--\n${code}\n-->`);
+    }
+
+    // Finding all matches in the string
+    const matches2 = content.matchAll(regex.api2);
+
+    // Logging the extracted values
+    for (const match of matches2) {
         const APIpath = match[1];
         const code = match[2];
         console.log(APIpath)

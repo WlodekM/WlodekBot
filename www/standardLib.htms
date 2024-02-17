@@ -28,7 +28,7 @@
     function decorateElement(element) {
         let resultingElement = element
         function addFunction(funcName, property) {
-            if (element[property]) {
+            if (element[property] != undefined) {
                 resultingElement[funcName] = ((a = null) => {
                     if (a) element[property] = a
                     return element[property]
@@ -42,6 +42,7 @@
         }
 
         addLisserner("click", "click")
+        addLisserner("submit", "submit")
         addFunction("val", "value")
         addFunction("html", "innerHTML")
         addFunction("text", "innerText")
