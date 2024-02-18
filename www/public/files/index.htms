@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse</title>
+    <title>Browse - <ss>bot.username</ss></title>
     <include@www/libs.htms />
     <api path="chkFile">
         res.send(fs.existsSync(req.query.file))
@@ -47,7 +47,8 @@
 </head>
 
 <body>
-    <#chkFile>
+    <h1>Browse files</h1>
+    <hr>
     <script type="module" context="ss">
         let uuh = fs.statSync(req.query.path || './')
         if (!uuh.isDirectory()) {
@@ -115,7 +116,22 @@
                             stats: stats
                         };
                     });
-                files.map((a, i) => {return `\
+                files.map((a, i) => {return a.isDirectory ? `\
+    <tr>\
+        <td>\
+            <a href='?path=${a.fullPath}'>${a.isDirectory ? "<img src=\"https://www.apache.org/icons/folder.png\">" : "<img src=\"https://www.apache.org/icons/generic.png\">"}</a>\
+        </td>\
+        <td>\
+            <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : `download="${path.basename(a.fullPath)}"`}>${a.name}</a>
+        </td>\
+        <td>\
+            ${strftime('%H:%M %d.%m.%Y', a.stats.ctime)}
+        </td>\
+        <td>\
+            <img src="https://www.apache.org/icons/broken.png" hx-get="<#delFile>?path=${a.isDirectory ? "-rf " : ""}${a.fullPath}" hx-trigger="click" hx-target="hx-out">\
+        </td>\
+    </tr>` : ""}).join("\n") +
+                files.map((a, i) => {return a.isDirectory ? "" :`\
     <tr>\
         <td>\
             <a href='?path=${a.fullPath}'>${a.isDirectory ? "<img src=\"https://www.apache.org/icons/folder.png\">" : "<img src=\"https://www.apache.org/icons/generic.png\">"}</a>\
