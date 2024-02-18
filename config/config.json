@@ -24,5 +24,6 @@
     "urls": {
         "api": "api.meower.org",
         "server": "wss://api.meower.org/v0/cloudlink/"
-    }
+    },
+    "modules": ["webdav"]
 }

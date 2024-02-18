@@ -32,7 +32,7 @@
                 <sl-tab slot="nav" panel="dashboard">Dashboard</sl-tab>
                 <sl-tab slot="nav" panel="info">Info</sl-tab>
                 <sl-tab slot="nav" panel="logs">Logs</sl-tab>
-                <sl-tab slot="nav" panel="files">Files</sl-tab>
+                <sl-tab slot="nav" panel="files" disabled>Files</sl-tab>
 
                 <sl-tab-panel name="dashboard">
                     <h2>Dashboard omg so cool</h2>
@@ -123,7 +123,8 @@ leaderboardArray(money_leaderboard).join("</li>\n<li>")
                                         <li><a href="/messages">Welcome messages.</a></li>
                                         <li><a href="/userlist">Userlist</a></li>
                                         <li><a href="/post">Chat</a></li>
-                                        <li><a href="/config">Config</a></li>
+                                        <li><a href="/files">Files</a></li>
+                                        <li><a href="/WebDAV" disabled>WebDAV</a></li>
                                     </ul>
                                 </div>
                                 <!-- <div id="links" class="body">

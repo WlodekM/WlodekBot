@@ -81,6 +81,19 @@ export async function runBot() {
     logs.logMessage("---")
     logs.log("---")
 
+    const modules = []
+    config.modules.forEach(async m => {
+        try {
+            let im = await import(`./modules/${m}.js`)
+            console.log(im)
+            modules.push(im.default)
+            console.log(`Attempting to run module "${m}"`)
+            im.default.run(config, auth)
+        } catch(e) {
+            console.log(`Error occurred while loading module "${m}"`, e)
+        }
+    })
+
     // UwU event mixin
     if (activeEvents.includes("uwu")) {
         bot.post = events.uwu.post
@@ -120,8 +133,9 @@ export async function runBot() {
 
         let command = (splitMessage[1])
         if (command) command = command.toLowerCase()
-        let args = Array(message.split(" "))
+        let args = message.split(" ")
         args = args.splice(2)
+        logs.log(`${command} | ${args} | ${message.split(" ")}`)
 
         if (command == null) {
             command = "mention"

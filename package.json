@@ -16,7 +16,8 @@
 		"open": "^9.1.0",
 		"simple-git": "^3.21.0",
 		"simple-json-db": "^2.0.0",
-		"uuid": "^9.0.1"
+		"uuid": "^9.0.1",
+		"webdav-server": "^2.6.2"
 	},
 	"devDependencies": {
 		"capture-console": "^1.0.2"
