@@ -8,7 +8,7 @@ import fs from 'fs'
 import { events, activeEvents } from "./libs/events.js";
 import { scan as scanCommands } from "./commands/commandManager.js";
 import * as welcome from "./libs/start/welcome_message.js";
-//{ welcome, reload as setReloaded }
+
 function getunix() {
     return (Math.floor(Date.now() / 1000))
 }
@@ -76,6 +76,10 @@ export async function runBot() {
     bot.update  = config.bot.update
     update      = config.bot.update
     const prefix = "@" + username
+
+    // Create log files if some other code needs them (*cough* the dashboard)
+    logs.logMessage("---")
+    logs.log("---")
 
     // UwU event mixin
     if (activeEvents.includes("uwu")) {

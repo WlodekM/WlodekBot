@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in to <ss>bot.username</ss></title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <link href="/global.css" rel="stylesheet">
+    <include@www/libs.htms />
+    <script>
+        s.onReady(async()=>{
+            let el = await s.getElement("#loginForm")
+            el.addEventListener("submit",
+                /**
+                 * @param {Event} e
+                 */
+                function (e) {
+                    e.preventDefault()
+                    S("#err").text("")
+                    
+                    if(!S("#login")?.val()) return S("#err").text("Please enter your username")
+                    
+                    if(!S("#passw")?.val()) return S("#err").text("Please enter your password")
+
+                    let login = S("#login")?.val()
+                    let passw = S("#passw")?.val()
+
+                    console.log(login, passw)
+
+                    // s.get("<#chkFile>?file=" + "<ss>req.query.path || './'</ss>" + file, (text, status) => {
+                    //     if(!JSON.parse(text)) console.log("UIENAINU")
+                    // })
+
+                    let obj = {
+                        username: login,
+                        password: passw
+                    }
+
+                    let q = new URLSearchParams(obj)
+
+                    s.get(`/api/web/login?${q.toString()}`, (s, r)=>{console.log(s, r)})
+                }
+            )
+        })
+    </script>
+</head>
+<body>
+    <form id="loginForm">
+        <input type="text" name="login" id="login" placeholder="Username..."> <br>
+        <input type="password" name="passw" id="passw" placeholder="Password..."> <br>
+        <input type="submit" value="Log in">
+    </form>
+    <span id="err"></span>
+</body>
+</html>

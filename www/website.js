@@ -7,6 +7,16 @@ import os from "os"
 import { log, getLogPath, logMessage } from "../libs/logs.js";
 import { exec } from "child_process";
 import strftime from '../libs/strftime.js'
+import { v4 as uuidv4 } from "uuid";
+import cookies from "cookie-parser"
+
+function generateSessionId() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+function generateUserId() {
+    return uuidv4() // Replace with your user ID generation logic
+}
 
 console.log("Initializing HTMS...")
 const s = {
@@ -164,7 +174,7 @@ function publicPage(RequestURL, FilePath) {
     // console.log(filePath)
     let isDir = !(filePath.indexOf('.') > -1)
     if (isDir) filePath += filePath.endsWith("/") ? "index.html" : "/index.html"
-    console.log(filePath, isDir)
+    // console.log(filePath, isDir)
     if (!fs.existsSync(filePath)) {
         if (fs.existsSync(filePath.replaceAll(".html", ".htms"))) {
             return [filePath.replaceAll(".html", ".htms"), "htms"]
@@ -252,43 +262,85 @@ function handle404(req, res) {
     res.status(404).send(parseHtms(req, res, ihdguk[0]))
 }
 
+const sessions = {}
+
 console.log("HTMS initialized!")
 
 export const website = (() => {
     console.log("OI!")
     const app = express()
+    app.use(cookies())
     s.app = app
     const port = 3000;
     app.set('trust proxy', true)
     app.use((req, res, next) => {
-
-        // -----------------------------------------------------------------------
-        // authentication middleware
-
-        const auth = { login: configAuth.web.u, password: configAuth.web.p }
-
-        // parse login and password from headers
-        const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
-        const [login, pass] = Buffer.from(b64auth, 'base64').toString().split(':')
-
-        // Verify login and password are set and correct
-        if (login && pass && login === auth.login && pass === auth.password) {
-            // Access granted...
-            return next()
-        }
-
-        log(`# User at ${req.ip} tried to access website (Entered credentials: ${login}, ${pass})`)
-
+        if(req.path == "/api/web/login") return next()
+        if(req.path.endsWith(".css")) return next()
+        if(req.path.endsWith(".js")) return next()
+        if(sessions[req.cookies?.session]) return next()
+        
+        let pp = publicPage("login.htms", "www/")
+        
         // Access denied...
-        res.set('WWW-Authenticate', 'Basic realm="401"') // change this
-        res.status(401).send('Authentication required.') // custom message
-
-        // -----------------------------------------------------------------------
-
+        res.status(401).send(parseHtms(req, res, pp[0])) // custom message
     })
+    // old auth api
+    // app.use((req, res, next) => {
+
+    //     // -----------------------------------------------------------------------
+    //     // authentication middleware
+
+    //     const auth = { login: configAuth.web.u, password: configAuth.web.p }
+
+    //     // parse login and password from headers
+    //     const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
+    //     const [login, pass] = Buffer.from(b64auth, 'base64').toString().split(':')
+
+    //     // Verify login and password are set and correct
+    //     if (login && pass && login === auth.login && pass === auth.password) {
+    //         // Access granted...
+    //         return next()
+    //     }
+
+    //     log(`# User at ${req.ip} tried to access website (Entered credentials: ${login}, ${pass})`)
+
+    //     // Access denied...
+    //     res.set('WWW-Authenticate', 'Basic realm="401"') // change this
+    //     res.status(401).send('Authentication required.') // custom message
+
+    //     // -----------------------------------------------------------------------
+
+    // })
     //ANCHOR - API
     app.get('/api', (req, res) => {
         res.send('Hello World!, the api is in progress')
+    })
+    app.get('/api/web/login', (req, res) => {
+        if(!req.query.username) return res.status(400).send("400 - Bad request (Missing \"username\" query option)")
+        if(!req.query.password) return res.status(400).send("400 - Bad request (Missing \"password\" query option)")
+        let userDB = new JSONdb("db/users.json")
+        if (req.query.username == bot.username && req.query.password == configAuth.bot.password) {
+            let sID = generateSessionId()
+            res.cookie("session", sID)
+            sessions[sID] = {
+                username: req.query.username,
+                password: req.query.password,
+                type: 'overwrite'
+            }
+            console.log(sessions)
+            return res.status(200).send("200")
+        }
+        if (!userDB.has(req.query.username)) return res.status(418).send("418 - I'm a teapot (Username not found)")
+        if (userDB.get(req.query.username).password != req.query.password) return res.status(418).send("418 - I'm a teapot (Invalid password)")
+        let sID = generateSessionId()
+        res.cookie("session", sID)
+        sessions[sID] = {
+            username: req.query.username,
+            password: req.query.password,
+            type: 'webAdmin'
+        }
+        console.log(sessions)
+        return res.status(200).send("200")
     })
     //json
     app.get('/api/json/shutdown', (req, res) => {

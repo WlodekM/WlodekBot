@@ -4,6 +4,7 @@
 		"run": "node ."
 	},
 	"dependencies": {
+		"cookie-parser": "^1.4.6",
 		"dotenv": "^16.0.3",
 		"express": "^4.18.2",
 		"fs": "^0.0.1-security",
@@ -14,7 +15,8 @@
 		"node-fetch": "^3.3.0",
 		"open": "^9.1.0",
 		"simple-git": "^3.21.0",
-		"simple-json-db": "^2.0.0"
+		"simple-json-db": "^2.0.0",
+		"uuid": "^9.0.1"
 	},
 	"devDependencies": {
 		"capture-console": "^1.0.2"

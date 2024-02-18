@@ -44,6 +44,15 @@
             )
         })
     </script>
+    <style>
+        body, a, input, textarea, button {
+            background-color: black;
+            color: #0f0;
+        }
+        input, textarea, button, hr {
+            border: #0f0 1px solid;
+        }
+    </style>
 </head>
 
 <body>
@@ -61,44 +70,69 @@
     </ss>
     <table>
         <tr>
-            <th></th>
             <th>File</th>
+            <th>Size</th>
             <th>Last changed</th>
             <th>Actions</th>
         </tr>
         <tr>
             <td>
-                <a href="?path=./">
-                    <img src="https://www.apache.org/icons/comp.gray.png">
+                <a href="?path=/">
+                    /
                 </a>
             </td>
+            <td>
+                &lt;DIR&gt;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a href="?path=C:\">
+                    C:\
+                </a>
+            </td>
+            <td>
+                &lt;DIR&gt;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a href="?path=~">
+                    ~
+                </a>
+            </td>
+            <td>
+                &lt;DIR&gt;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br>
+            </td>
+        </tr>
+        <tr>
             <td>
                 <a href="?path=./">
                     Home directory (./)
                 </a>
             </td>
+            <td>
+                &lt;DIR&gt;
+            </td>
         </tr>
         <tr>
-            <td>
-                <a href="?path=<ss>path.normalize(req.query.path + '/..');</ss>">
-                    <img src="https://www.apache.org/icons/back.png">
-                </a>
-            </td>
             <td>
                 <a href="?path=<ss>path.normalize(req.query.path + '/..');</ss>">
                     Parent directory (<ss>path.normalize(req.query.path + '/..');</ss>)
                 </a>
             </td>
+            <td>
+                &lt;DIR&gt;
+            </td>
         </tr>
         <tr>
             <td>
-                <hr>
-            </td>
-            <td>
-                <hr>
-            </td>
-            <td>
-                <hr>
+                <br>
             </td>
         </tr>
         <script type="module" context="ss">
@@ -119,31 +153,31 @@
                 files.map((a, i) => {return a.isDirectory ? `\
     <tr>\
         <td>\
-            <a href='?path=${a.fullPath}'>${a.isDirectory ? "<img src=\"https://www.apache.org/icons/folder.png\">" : "<img src=\"https://www.apache.org/icons/generic.png\">"}</a>\
+            <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : `download="${path.basename(a.fullPath)}"`}>${a.name}</a>
         </td>\
         <td>\
-            <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : `download="${path.basename(a.fullPath)}"`}>${a.name}</a>
+            &lt;DIR&gt;
         </td>\
         <td>\
             ${strftime('%H:%M %d.%m.%Y', a.stats.ctime)}
         </td>\
         <td>\
-            <img src="https://www.apache.org/icons/broken.png" hx-get="<#delFile>?path=${a.isDirectory ? "-rf " : ""}${a.fullPath}" hx-trigger="click" hx-target="hx-out">\
+            <a href="#" hx-get="<#delFile>?path=${a.isDirectory ? "-rf " : ""}${a.fullPath}" hx-trigger="click" hx-target="hx-out">[DELETE]</a>\
         </td>\
     </tr>` : ""}).join("\n") +
                 files.map((a, i) => {return a.isDirectory ? "" :`\
     <tr>\
         <td>\
-            <a href='?path=${a.fullPath}'>${a.isDirectory ? "<img src=\"https://www.apache.org/icons/folder.png\">" : "<img src=\"https://www.apache.org/icons/generic.png\">"}</a>\
+            <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : `download="${path.basename(a.fullPath)}"`}>${a.name}</a>
         </td>\
         <td>\
-            <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : `download="${path.basename(a.fullPath)}"`}>${a.name}</a>
+            ${a.stats.size / 1000}KB\
         </td>\
         <td>\
             ${strftime('%H:%M %d.%m.%Y', a.stats.ctime)}
         </td>\
         <td>\
-            <img src="https://www.apache.org/icons/broken.png" hx-get="<#delFile>?path=${a.isDirectory ? "-rf " : ""}${a.fullPath}" hx-trigger="click" hx-target="hx-out">\
+            <a href="#" hx-get="<#delFile>?path=${a.isDirectory ? "-rf " : ""}${a.fullPath}" hx-trigger="click" hx-target="hx-out">[DELETE]</a>\
         </td>\
     </tr>`}).join("\n")
             } else { "" }
