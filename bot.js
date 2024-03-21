@@ -1,4 +1,4 @@
-import Bot from "meowerbot";
+import Bot from "./MeowerBot.js/dist/MeowerBot.js";
 // import { exec } from "child_process";
 import { delay } from "./libs/delay.js"
 // import * as dotenv from "dotenv";
@@ -189,7 +189,7 @@ export async function runBot() {
         checkForCommand(command)
     });
 
-    bot.onMessage((messageData) => {
+    bot.onPacket((messageData) => {
         if (messageData.cmd == "pmsg") {
             bot.send_packet({ cmd: "pmsg", val: "I:100 | Bot", id: messageData.origin })
         }
