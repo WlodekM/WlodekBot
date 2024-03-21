@@ -1,7 +1,8 @@
 {
 	"type": "module",
 	"scripts": {
-		"run": "node ."
+		"run": "node .",
+		"setup": "cd MeowerBot.js && npm install pnpm && pnpm install && pnpm run build"
 	},
 	"dependencies": {
 		"cookie-parser": "^1.4.6",

@@ -1,0 +1,4 @@
+[submodule "MeowerBot.js"]
+	path = MeowerBot.js
+	url = https://github.com/meower-community/MeowerBot.js
+	branch = v2
