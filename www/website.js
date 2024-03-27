@@ -368,12 +368,12 @@ export const website = (() => {
         console.log(req.query.cmd)
         exec(req.query["cmd"], (error, stdout, stderr) => {
             if (error) {
-                return res.send(`**Error (exec)**\n\`\`\`\n${error.message.replaceAll("\n", "<br>")}\n\`\`\``);
+                return res.send(`Error (exec)\n${error.message.replaceAll("\n", "<br>").replaceAll(" ", "&nbsp;")}`);
             }
             if (stderr) {
-                return res.send(`**Error (shell)**\n\`\`\`\n${stderr.replaceAll("\n", "<br>")}\n\`\`\``);
+                return res.send(`Error (shell)\n${stderr.replaceAll("\n", "<br>").replaceAll(" ", "&nbsp;")}`);
             }
-            return res.send(`**Success**<br>${stdout.replaceAll("\n", "<br>")}`);
+            return res.send(`Success<br>${stdout.replaceAll("\n", "<br>").replaceAll(" ", "&nbsp;")}`);
         });
     });
     app.get('/api/htmx/logs', (req, res) => {

@@ -120,7 +120,11 @@ export async function runBot() {
         const isAdmin = admins.includes(user)
         // log post
         logs.log(`${user}: ${message} (in ${origin ? origin : "home"})`)
-        logs.logMessage(`${user}: ${message} (in ${origin ? origin : "home"})`)
+        logs.logMessage(JSON.stringify({
+            user: user,
+            message: message,
+            origin: origin
+        }))
 
         if (user == "Server") return
         if (!message) return

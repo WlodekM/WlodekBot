@@ -58,6 +58,9 @@ export function welcome() {
         }
     }
     let lines = readFilesInDirectory("commands/")
+    lines += readFilesInDirectory("libs/")
+    lines += readFilesInDirectory("modules/")
+    lines += readFilesInDirectory("www/")
     // const files = fs.readdirSync("");
     let mainFileLength = String(fs.readFileSync('bot.js')).split('\n').length
 

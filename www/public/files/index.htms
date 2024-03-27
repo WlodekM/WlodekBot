@@ -171,7 +171,7 @@
             <a href='${a.isDirectory ? "?path=" : "/browse?path="}${a.fullPath}' ${a.isDirectory ? "" : `download="${path.basename(a.fullPath)}"`}>${a.name}</a>
         </td>\
         <td>\
-            ${a.stats.size / 1000}KB\
+            ${a.stats.size<1000 ? a.stats.size + "B" : a.stats.size>1000000 ? a.stats.size/1000000 + "MB" : a.stats.size / 1000 + "KB"}\
         </td>\
         <td>\
             ${strftime('%H:%M %d.%m.%Y', a.stats.ctime)}
