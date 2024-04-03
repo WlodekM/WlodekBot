@@ -22,3 +22,6 @@ invites.json
 stores/lastStartup.txt
 config/auth.json
 stores/lastStartup.txt
+stores/lastStartup.txt
+/stores
+*.txt

@@ -68,6 +68,8 @@ export function welcome() {
 
     lines += mainFileLength
 
+    console.log(`${lines} lines of code`)
+
     // welcome_messages.sync()
     let lastStartup = fs.readFileSync("stores/lastStartup.txt") ?? 0
     var messages = welcome_messages.verified
