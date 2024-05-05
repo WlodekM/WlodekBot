@@ -1,4 +1,4 @@
-import Bot from "./MeowerBot.js/dist/MeowerBot.js";
+import { Client } from "@meower-media/meower";
 // import { exec } from "child_process";
 import { delay } from "./libs/delay.js"
 // import * as dotenv from "dotenv";
@@ -52,7 +52,7 @@ export let uptime
 export let db
 export let shop
 export let invites
-export const bot = new Bot()
+export const bot = new Client()
 export const config = JSON.parse(fs.readFileSync("config/config.json"))
 export const auth = JSON.parse(fs.readFileSync("config/auth.json"))
 export let update
@@ -103,7 +103,8 @@ export async function runBot() {
     function doLogin(i) {
         if (i > 20) return;
         try {
-            bot.login(username, password, server)
+            if(server) bot.server = server
+            bot.login(username, password)
         } catch (error) {
             doLogin(i + 1)
         }

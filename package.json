@@ -1,26 +1,27 @@
 {
-	"type": "module",
-	"scripts": {
-		"run": "node .",
-		"setup": "cd MeowerBot.js && npm install pnpm && pnpm install && pnpm run build"
-	},
-	"dependencies": {
-		"cookie-parser": "^1.4.6",
-		"dotenv": "^16.0.3",
-		"express": "^4.18.2",
-		"fs": "^0.0.1-security",
-		"isolated-vm": "^4.7.2",
-		"libs": "^0.1.2",
-		"meowerbot": "^1.6.0",
-		"moment": "^2.29.4",
-		"node-fetch": "^3.3.0",
-		"open": "^9.1.0",
-		"simple-git": "^3.21.0",
-		"simple-json-db": "^2.0.0",
-		"uuid": "^9.0.1",
-		"webdav-server": "^2.6.2"
-	},
-	"devDependencies": {
-		"capture-console": "^1.0.2"
-	}
+  "type": "module",
+  "scripts": {
+    "run": "node .",
+    "setup": "cd MeowerBot.js && npm install pnpm && pnpm install && pnpm run build"
+  },
+  "dependencies": {
+    "@meower-media/meower": "^2.0.0-alpha11",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "isolated-vm": "^4.7.2",
+    "libs": "^0.1.2",
+    "meowerbot": "^1.6.0",
+    "moment": "^2.29.4",
+    "node-fetch": "^3.3.0",
+    "open": "^9.1.0",
+    "simple-git": "^3.21.0",
+    "simple-json-db": "^2.0.0",
+    "uuid": "^9.0.1",
+    "webdav-server": "^2.6.2"
+  },
+  "devDependencies": {
+    "capture-console": "^1.0.2"
+  }
 }
