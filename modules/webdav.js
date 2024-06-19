@@ -7,7 +7,7 @@ export default {
     run: function(config, auth) {
         logs.log("Ran WebDAV module")
         const userManager = new webdav.SimpleUserManager();
-        const user = userManager.addUser(auth.bot.username, auth.bot.password, false);
+        const user = userManager.addUser(auth.bot.user.username, auth.bot.password, false);
          
         // Privilege manager (tells which users can access which files/folders)
         const privilegeManager = new webdav.SimplePathPrivilegeManager();

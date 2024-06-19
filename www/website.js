@@ -319,7 +319,7 @@ export const website = (() => {
         if(!req.query.username) return res.status(400).send("400 - Bad request (Missing \"username\" query option)")
         if(!req.query.password) return res.status(400).send("400 - Bad request (Missing \"password\" query option)")
         let userDB = new JSONdb("db/users.json")
-        if (req.query.username == bot.username && req.query.password == configAuth.bot.password) {
+        if (req.query.username == bot.user.username && req.query.password == configAuth.bot.password) {
             let sID = generateSessionId()
             res.cookie("session", sID)
             sessions[sID] = {
@@ -359,7 +359,7 @@ export const website = (() => {
     })
     app.get('/api/htmx/postHome', (req, res) => {
         if (req.query["post"] == null) { res.send(`<span style="color: red">No "post" argument</span>`); return }
-        logMessage(`${bot.username}: ${req.query["post"]}`)
+        logMessage(`${bot.user.username}: ${req.query["post"]}`)
         bot.post(`${req.query["post"]}`)
         res.send(`<span style="color: limegreen">Success</span>`)
     });

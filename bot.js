@@ -75,7 +75,7 @@ export async function runBot() {
     bot.version = config.bot.update.version
     bot.update  = config.bot.update
     update      = config.bot.update
-    const prefix = "@" + username
+    let prefix
 
     // Create log files if some other code needs them (*cough* the dashboard)
     logs.logMessage("---")
@@ -220,11 +220,12 @@ export async function runBot() {
         doLogin(0)
     });
 
-    bot.onLogin(async () => {
-        // welcome.welcome()
-        let a = await bot.post("helo this is a test")
-        console.log(a)
-        logs.log(`: Logged on as user ${username}`)
+    bot.onLogin(/*async*/ () => {
+        prefix = "@" + bot.user.username
+        welcome.welcome()
+        // let a = await bot.post("helo this is a test")
+        // console.log(a)
+        logs.log(`: Logged on as user ${username} [${bot.user.username}]`)
     });
 
     doLogin(0)

@@ -74,7 +74,7 @@ export default {
         } else {
             let msg = ""
             let helpArray = []
-            msg += `Hello, i'm ${bot.username} - a multipurpose bot!\nHere are my commands:`
+            msg += `Hello, i'm ${bot.user.username} - a multipurpose bot!\nHere are my commands:`
             for (const key in commandTags) {
                 if (Object.hasOwnProperty.call(commandTags, key)) {
                     const element = commandTags[key];

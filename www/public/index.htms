@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title><ss>bot.username</ss> - <@PATH></title>
+    <title><ss>bot.user.username</ss> - <@PATH></title>
     <link rel="stylesheet" href="https://unpkg.com/98.css">
     <link href="/global.css" rel="stylesheet">
     <include@www/libs.htms />
@@ -23,8 +23,8 @@
 <body style="--sl-font-sans: let(--font)">
     <section class="background">
         <main class="main center">
-            <h1 id="no-margin"><ss>bot.username</ss></h1>
-            <p>Welcome to <ss>bot.username</ss>'s website!</p>
+            <h1 id="no-margin"><ss>bot.user.username</ss></h1>
+            <p>Welcome to <ss>bot.user.username</ss>'s website!</p>
             <ss>1+2</ss>
             <p>this will be like a dashboard in the future but im too lazy to do that now</p>
             <sl-tab-group
