@@ -34,7 +34,7 @@ export const commandTags = {
     "invite": ["UTILITY"]
     // "uniBridge": ["OTHER"]
 }
-var commandNames = Object.keys(help)
+let commandNames = Object.keys(help)
 const adminlevels = [
     "User",
     "Lower moderator",
@@ -72,8 +72,8 @@ export default {
         if (help[args[0]]) {
             bot.post(help[args[0]], origin)
         } else {
-            var msg = ""
-            var helpArray = []
+            let msg = ""
+            let helpArray = []
             msg += `Hello, i'm ${bot.username} - a multipurpose bot!\nHere are my commands:`
             for (const key in commandTags) {
                 if (Object.hasOwnProperty.call(commandTags, key)) {

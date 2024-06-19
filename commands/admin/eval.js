@@ -7,7 +7,7 @@ export default {
           return
         }
         try {
-          var evaluated = eval(args.join(" "))
+          let evaluated = eval(args.join(" "))
           bot.post(`[✔︎] Evaluation success!\n${evaluated}`, origin)
         } catch (err) {
           bot.post(`[⚠︎] Evaluation failed!\n${err}`, origin)

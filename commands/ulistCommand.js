@@ -9,7 +9,7 @@ export default {
             console.error(err);
             return;
         }
-        var userlist = JSON.parse(data)
+        let userlist = JSON.parse(data)
         bot.post(`There are currently ${userlist.length} user(s) online (${userlist.join(", ")}).`, origin)
     }
 }

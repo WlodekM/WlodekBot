@@ -10,7 +10,7 @@ export default {
             db.set(`${user}-money`, 0)
         }
         if (args[0] == null) {
-            var user_money = db.get(`${user}-money`)
+            let user_money = db.get(`${user}-money`)
             bot.post(`Your balance is ${user_money}${db.get("currency")}`, origin)
         } else if (args[0] == "reset") {
             db.set(`${user}-money`, 0)

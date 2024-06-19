@@ -72,9 +72,10 @@ export function welcome() {
 
     // welcome_messages.sync()
     let lastStartup = fs.readFileSync("stores/lastStartup.txt") ?? 0
-    var messages = welcome_messages.verified
-    var random_message = messages[Math.floor(Math.random() * messages.length)].replaceAll("${username}", bot.username)
-    // var random_message = "$(lnCount)$ test"
+    let messages = welcome_messages.verified
+    let random_message = messages[Math.floor(Math.random() * messages.length)].replaceAll("${username}", bot.username)
+    console.log(`: updating quote to "v${bot.update.version} | ${String(lines)} lines of code | ${random_message}"`)
+    // let random_message = "$(lnCount)$ test"
     random_message = random_message.replaceAll("$(lnCount)$", String(lines))
     if (getunix() - lastStartup > 600) {
         fs.writeFileSync("stores/lastStartup.txt", String(getunix()))

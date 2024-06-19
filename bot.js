@@ -5,7 +5,7 @@ import { delay } from "./libs/delay.js"
 import JSONdb from "simple-json-db";
 import * as logs from "./libs/logs.js";
 import fs from 'fs'
-import { events, activeEvents } from "./libs/events.js";
+// import { events, activeEvents } from "./libs/events.js";
 import { scan as scanCommands } from "./commands/commandManager.js";
 import * as welcome from "./libs/start/welcome_message.js";
 
@@ -52,7 +52,7 @@ export let uptime
 export let db
 export let shop
 export let invites
-export const bot = new Client()
+export const bot = new Client("wss://api.meower.org/v0/cloudli", "https://api.meower.org/")
 export const config = JSON.parse(fs.readFileSync("config/config.json"))
 export const auth = JSON.parse(fs.readFileSync("config/auth.json"))
 export let update
@@ -62,14 +62,14 @@ export async function runBot() {
     const commands = await scanCommands()
     const adminCommands = await scanCommands("./commands/admin", "admin/")
 
-    let username = auth.bot.username
-    let password = auth.bot.password
-    let admins = config.bot.admins;
-    let server = config.urls.server
-    let uptime = new Date().getTime();
-    let db = new JSONdb("./db/db.json");
-    let shop = new JSONdb("./db/shop.json");
-    let invites = new JSONdb("./commands/gcInvite/invites.json")
+    username = auth.bot.username
+    password = auth.bot.password
+    admins = config.bot.admins;
+    server = config.urls.server
+    uptime = new Date().getTime();
+    db = new JSONdb("./db/db.json");
+    shop = new JSONdb("./db/shop.json");
+    invites = new JSONdb("./commands/gcInvite/invites.json")
 
     // Define bot stuff
     bot.version = config.bot.update.version
@@ -81,29 +81,30 @@ export async function runBot() {
     logs.logMessage("---")
     logs.log("---")
 
-    const modules = []
-    config.modules.forEach(async m => {
-        try {
-            let im = await import(`./modules/${m}.js`)
-            console.log(im)
-            modules.push(im.default)
-            console.log(`Attempting to run module "${m}"`)
-            im.default.run(config, auth)
-        } catch(e) {
-            console.log(`Error occurred while loading module "${m}"`, e)
-        }
-    })
+    // const modules = []
+    // config.modules.forEach(async m => {
+    //     try {
+    //         let im = await import(`./modules/${m}.js`)
+    //         console.log(im)
+    //         modules.push(im.default)
+    //         console.log(`Attempting to run module "${m}"`)
+    //         im.default.run(config, auth)
+    //     } catch(e) {
+    //         console.log(`Error occurred while loading module "${m}"`, e)
+    //     }
+    // })
 
-    // UwU event mixin
-    if (activeEvents.includes("uwu")) {
-        bot.post = events.uwu.post
-    }
+    // // UwU event mixin
+    // if (activeEvents.includes("uwu")) {
+    //     bot.post = events.uwu.post
+    // }
 
     // Actual bot code yippee
     function doLogin(i) {
         if (i > 20) return;
         try {
             if(server) bot.server = server
+            console.log(`: Trying to log in {${i}}`)
             bot.login(username, password)
         } catch (error) {
             doLogin(i + 1)
@@ -199,7 +200,7 @@ export async function runBot() {
             bot.send_packet({ cmd: "pmsg", val: "I:100 | Bot", id: messageData.origin })
         }
         if (config.settings.logCL == "true") { logs.log(`[CL] ${messageData} (${config.settings.logCL})`); }
-        var JSONdata = JSON.parse(messageData)
+        let JSONdata = JSON.parse(messageData)
         switch (JSONdata["cmd"]) {
             case ("ulist"):
                 fs.writeFileSync("stores/ulist.txt", JSON.stringify(JSONdata["val"].split(";").slice(0, -1)))
@@ -219,8 +220,10 @@ export async function runBot() {
         doLogin(0)
     });
 
-    bot.onLogin(() => {
-        welcome.welcome()
+    bot.onLogin(async () => {
+        // welcome.welcome()
+        let a = await bot.post("helo this is a test")
+        console.log(a)
         logs.log(`: Logged on as user ${username}`)
     });
 

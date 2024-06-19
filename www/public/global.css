@@ -18,15 +18,15 @@ section.background {
     /* position: absolute; */
     width: 100%;
     min-height: 100%;
-    background: var(--background);
+    background: let(--background);
     background-repeat: no-repeat;
     background-size: cover;
 }
 
 main.main {
     image-rendering: pixelated;
-    font-family: var(--font);
-    background: var(--foreground);
+    font-family: let(--font);
+    background: let(--foreground);
     position: absolute;
     width: calc(100% - 20vw);
     padding: 10px;

@@ -8,9 +8,9 @@ export default {
         db.sync()
         if (Number(args[1]) == args[1]) {
             if (args.length > 2) {
-                var reason = args.slice(2).join(" ")
-                var time = getunix() + Number(args[1])
-                var banneduser = args[0]
+                let reason = args.slice(2).join(" ")
+                let time = getunix() + Number(args[1])
+                let banneduser = args[0]
                 db.set(`${banneduser}-ban-end`, time)
                 db.set(`${banneduser}-ban-reason`, reason)
             }

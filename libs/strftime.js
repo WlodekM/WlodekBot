@@ -28,7 +28,7 @@
  */
 export default function strftime(sFormat, date) {
     if (!(date instanceof Date)) date = new Date();
-    var nDay = date.getDay(),
+    let nDay = date.getDay(),
       nDate = date.getDate(),
       nMonth = date.getMonth(),
       nYear = date.getFullYear(),
@@ -40,7 +40,7 @@ export default function strftime(sFormat, date) {
         return (nYear % 4 === 0 && nYear % 100 !== 0) || nYear % 400 === 0;
       },
       getThursday = function () {
-        var target = new Date(date);
+        let target = new Date(date);
         target.setDate(nDate - ((nDay + 6) % 7) + 3);
         return target;
       },
@@ -73,10 +73,10 @@ export default function strftime(sFormat, date) {
         '%S': zeroPad(date.getSeconds(), 2),
         '%u': nDay || 7,
         '%V': (function () {
-          var target = getThursday(),
+          let target = getThursday(),
             n1stThu = target.valueOf();
           target.setMonth(0, 1);
-          var nJan1 = target.getDay();
+          let nJan1 = target.getDay();
           if (nJan1 !== 4) target.setMonth(0, 1 + ((4 - nJan1) + 7) % 7);
           return zeroPad(1 + Math.ceil((n1stThu - target) / 604800000), 2);
         })(),

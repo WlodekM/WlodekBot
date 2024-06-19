@@ -13,7 +13,7 @@
     $(document).ready(function(){
       $("#submit").click(function(){
         console.log("HI!");
-        var url = `/postHome?post=${$("#post").val()}&user=${$("#user").val()}`;
+        let url = `/postHome?post=${$("#post").val()}&user=${$("#user").val()}`;
         fetch(url).then(response => {
             response.text().then(text => {
             console.log(text);

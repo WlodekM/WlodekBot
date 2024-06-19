@@ -32,4 +32,4 @@ export const events = {
     }
 }
 
-export const activeEvents = ["uwu"]
+export const activeEvents = []

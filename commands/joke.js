@@ -4,7 +4,7 @@ export default {
     command: "joke",
     aliases: [],
     func({ user, message, origin, command, args, bot }) {
-        var result = '';
+        let result = '';
         const req = http.request(`https://official-joke-api.appspot.com/random_joke`, (res) => {
             // console.log(res.statusCode);
 

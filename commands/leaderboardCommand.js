@@ -19,8 +19,8 @@ export default {
     aliases: ["lb", "top"],
     func({ user, message, origin, command, args, bot }) {
         db.sync()
-        var database_a = db.JSON()
-        var money_leaderboard = {}
+        let database_a = db.JSON()
+        let money_leaderboard = {}
         for (const key in database_a) {
             if (Object.hasOwnProperty.call(database_a, key)) {
                 const element = database_a[key];
@@ -31,7 +31,7 @@ export default {
             }
         }
         console.log(`LB!: ${JSON.stringify((leaderboardarrayplace(money_leaderboard)))}`)
-        var user_place = (Object.values(leaderboardarrayplace(money_leaderboard)).indexOf(user)) + 1
+        let user_place = (Object.values(leaderboardarrayplace(money_leaderboard)).indexOf(user)) + 1
         money_leaderboard = Object.values(leaderboardarray(money_leaderboard))
         if (args[0] != "full") {
             money_leaderboard = money_leaderboard.slice(0, 10)

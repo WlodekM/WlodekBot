@@ -26,7 +26,7 @@ export function log(text, next) {
   let logs
   if (!config.settings.log) return
   if (typeof (text) == "string" && text != "") {
-    var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
+    let content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
     console.log(content)
     checkFolder(`logs/event-logs`)
     checkFile(`logs/event-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`, "\n")
@@ -39,7 +39,7 @@ export function logMessage(text, next) {
   let path = `logs/message-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`
   if (!config.settings.log) return
   if (typeof (text) == "string" && text != "") {
-    var content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
+    let content = `${text} | ${strftime('%d-%m-%Y', new Date())}`
     console.log(content)
     checkFolder(`logs/message-logs`)
     checkFile(path, "\n")
@@ -52,7 +52,7 @@ export function advLog(text, type, prefix) {
   let path = `logs/${type}-logs/${strftime('%d-%m-%Y', new Date())}-log.txt`
   if (!config.settings.log) return
   if (typeof (text) == "string" && text != "") {
-    var content = `${prefix}${prefix ? " " : ""}[${strftime('%H:%M', new Date())}] ${text}`
+    let content = `${prefix}${prefix ? " " : ""}[${strftime('%H:%M', new Date())}] ${text}`
     // console.log(content)
     checkFolder(`logs/${type}-logs`)
     checkFile(path, "\n")

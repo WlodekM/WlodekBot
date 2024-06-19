@@ -20,7 +20,7 @@
     });
 </api>
 
-<body style="--sl-font-sans: var(--font)">
+<body style="--sl-font-sans: let(--font)">
     <section class="background">
         <main class="main center">
             <h1 id="no-margin"><ss>bot.username</ss></h1>
@@ -89,8 +89,8 @@
                                         <li>
                                             <ss>
 let db = new JSONdb("./db/db.json");
-var database_a = db.JSON()
-var money_leaderboard = {}
+let database_a = db.JSON()
+let money_leaderboard = {}
 for (const key in database_a) {
 if (Object.hasOwnProperty.call(database_a, key)) {
     const element = database_a[key];

@@ -1,4 +1,5 @@
 # wlbot
+stores/lastStartup.txt
 auth.json
 logs
 config
@@ -19,9 +20,6 @@ ulist.txt
 commands/gcInvite/invites.json
 bridges.json
 invites.json
-stores/lastStartup.txt
 config/auth.json
-stores/lastStartup.txt
-stores/lastStartup.txt
 /stores
 *.txt

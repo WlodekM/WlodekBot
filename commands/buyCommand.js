@@ -17,9 +17,9 @@ export default {
         }
         if (shop.has(args)) {
             // bot.post(`Item "${args[0]}" was found, but i didn't add buying yet ¯\\_(ツ)_/¯`,origin)
-            var userinventory = db.get(`${user}-inventory`)
-            var userbalance = db.get(`${user}-money`)
-            var itemprice = shop.get(args)
+            let userinventory = db.get(`${user}-inventory`)
+            let userbalance = db.get(`${user}-money`)
+            let itemprice = shop.get(args)
             if (userbalance >= itemprice) {
                 userinventory.push(args)
                 db.set(`${user}-inventory`, userinventory)

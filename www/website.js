@@ -546,9 +546,9 @@ export const website = (() => {
     //             console.error(err);
     //             return;
     //         }
-    //         var userlist = JSON.parse(data)
-    //         var database_a = db.JSON()
-    //         var money_leaderboard = {}
+    //         let userlist = JSON.parse(data)
+    //         let database_a = db.JSON()
+    //         let money_leaderboard = {}
     //         for (const key in database_a) {
     //             if (Object.hasOwnProperty.call(database_a, key)) {
     //                 const element = database_a[key];
@@ -559,7 +559,7 @@ export const website = (() => {
     //             }
     //         }
     //         fs.readFile('public/index_a.htm', 'utf8', (err, data1) => {
-    //             var data2 = data1.replaceAll("[ULIST]", `<li>${userlist.join("</li>\n<li>")}</li>`)
+    //             let data2 = data1.replaceAll("[ULIST]", `<li>${userlist.join("</li>\n<li>")}</li>`)
     //             data2 = data2.replaceAll("[LB]", `<ol><li>${leaderboardArray(money_leaderboard).join("</li>\n<li>")}</li></ol>`)
     //             data2 = data2.replaceAll("[UPDATE]", `\
     //       <h5 id="padding1">${update.version}</h5>\
@@ -574,8 +574,8 @@ export const website = (() => {
                 console.error(err);
                 return;
             }
-            var userlist = JSON.parse(data)
-            var result = `<li>${userlist.join("</li>\n<li>")}</li>`
+            let userlist = JSON.parse(data)
+            let result = `<li>${userlist.join("</li>\n<li>")}</li>`
             res.send(result);
         });
     });
