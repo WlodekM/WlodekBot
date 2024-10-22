@@ -8,7 +8,7 @@
     "@meower-media/meower": "^2.0.0-alpha11",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
+    "express": "^4.21.1",
     "fs": "^0.0.1-security",
     "isolated-vm": "^4.7.2",
     "libs": "^0.1.2",
